@@ -1,4 +1,9 @@
+<hr>
+ <small>Joel Samelson & Jing Chen 2014</small><br>
+ </body>
+ </html>
+
 
 <?php
-    echo "<p>sucks to be you</p>";
+    
 ?>
