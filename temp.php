@@ -56,17 +56,11 @@
     function estabConnect(){
         createDatabase();
         createTables();
-        
     }
     
     estabConnect();
     
    
-    
-    
-   
-    
-    
     //creating product category
     
         
