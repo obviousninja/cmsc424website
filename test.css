@@ -1,35 +1,7 @@
-/*body {
-    background-color: #d0e4fe;
+form, .creditcardinfo:hover>div {
+    display: none;
 }
 
-h1 {
-    color: orange;
-    text-align: center;
-}
-
-p {
-    font-family: "Times New Roman";
-    font-size: 20px;
-}*/
-
-
-
-.divContainer{
-    background:yellow;
-    height: 120px;
-    width: 100px;
-    overflow:scroll;
-    white-space: nowrap;
-}
-.mainScreen{
-    background: none repeat scroll 0 0 red;
-    display: inline-block;
-    height: 100px;
-    width: 100px;
-}
-.login{
-    background: none repeat scroll 0 0 blue;
-    display: inline-block;
-    height: 100px;
-    width: 100px;
+.creditcardinfo:hover>form {
+    display: block;
 }

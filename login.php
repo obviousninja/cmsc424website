@@ -2,6 +2,7 @@
 	$servername = "localhost";
 	$username = "jsamelson";
 	$password = "database";
+	$database = "GroceryDelivery";
 	// Create connection
 	$conn = mysqli_connect($servername, $username, $password);
 
@@ -13,16 +14,28 @@
 	$email = $_POST["email"];
 	$password = $_POST["password"];
 
-	$sql = "SELECT * FROM GroceryDelivery.Test t WHERE t.FirstName = '$email' AND t.LastName = '$password'";
+	echo $email . "; " . $password . '<br>';
+
+	$sql = //"SELECT * FROM $database.Test";
+	"SELECT * FROM $database.customer c WHERE c.email = '$email' AND c.password = '$password'";
+
+		//"SELECT * FROM '$database'.Test t WHERE t.FirstName = '$email' AND t.LastName = '$password'";
+		//"INSERT INTO '$database'.TEST VALUES ($email, $password)";
+	echo $sql . '<br>';
 	$result = mysqli_query($conn, $sql);
 
-	if ($result && mysqli_num_rows($result) > 0) {
+	if ($result == FALSE) {
+		echo "Query failed!";
+	} elseif (mysqli_num_rows($result) > 0) {
 		// output data of each row
 		while($row = mysqli_fetch_assoc($result)) {
-			echo "lastname: " . $row["LastName"]. " - firstname: " . $row["FirstName"] . "<br>";
+			//echo "lastname: " . $row["LastName"]. " - firstname: " . $row["FirstName"] . "<br>";
+			echo "Welcome!";
+
+			header('Location: loggedinhome.html');
 		}
 	} else {
-		echo "0 results";
+		echo "0 results; bad login";
 	}
 
 	mysqli_close($conn);

@@ -5,7 +5,7 @@
     <style href="test.css"></style>
 </head>
 <body>
-	<?php include 'header.php';
+	<?php include 'loggedinheader.php';
 		$servername = "localhost";
 		$username = "jsamelson";
 		$password = "database";
@@ -24,20 +24,6 @@
 		<div class="mainScreen" style="color:#0000FF">
 			<h3>This is a heading</h3>
 			<p>This is a paragraph.</p>
-		</div>
-
-		<div class="login" style="border: 1px solid black">
-			<h3>Customer Login</h3><br>
-			<form action="login.php" method="post" align="left">
-				Email: <input type="text" name="email">
-				<br>
-				Password: <input type="password" name="password">
-				<br>
-				<br>
-				<input type="submit" value="Login">
-				<br>
-				<a href="createcustomer.html">New Customer</a>
-			</form>
 		</div>
 
 		<div style="clear: both;" class="clear"></div>
