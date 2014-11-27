@@ -2,29 +2,101 @@
 <html>
 <head>
     <title>Nom.com</title>
-    <style href="test.css"></style>
+
+    <script type="text/javascript">
+
+        // wait for the page to load
+        function makeCategoryList(){
+            var categoryArr = 
+            <?php 
+            	$servername = "localhost";
+				$username = "jsamelson";
+				$password = "database";
+				$database = "GroceryDelivery";
+				// Create connection
+				$conn = mysqli_connect($servername, $username, $password);
+
+				// Check connection
+				if (!$conn) {
+				    die("Connection failed: " . mysqli_connect_error());
+				} 
+
+				// Get list of product categories
+				$categoryArr = array();
+				$sql = "SELECT DISTINCT category FROM $database.productcategory";
+				//echo $sql . "<br>";
+				$result = mysqli_query($conn, $sql);
+
+				if (!$result) {
+					echo "Query failed!<br>";
+				} elseif (mysqli_num_rows($result) > 0) {
+					// output data of each row
+					while($row = mysqli_fetch_assoc($result)) {
+						$category = $row["category"];
+						//echo "category: " . $row["category"] . "<br>";
+
+						array_push($categoryArr, $category);
+					}
+
+					sort($categoryArr, SORT_STRING);
+
+					echo '["' . implode('", "', $categoryArr) . '"]';
+				} else {
+					echo "FAIL: categories not found!<br>";
+				}
+            	
+            ?>;
+
+            /*
+            console.log(categoryArr.length);
+            for (var i = 0; i < categoryArr.length; i++) {
+            	console.log(categoryArr[i]);
+            }
+            */
+
+            // Make a container element for the list - which is a <div>
+            // You don't actually need this container to make it work
+            var listContainer = document.createElement("div");
+
+            // add it to the page
+            document.getElementsByTagName("body")[0].appendChild(listContainer);
+
+            // Make the list itself which is a <ul>
+            var listElement = document.createElement("ul");
+
+            // add it to the page
+            listContainer.appendChild(listElement);
+
+            for( var i =  0; i < categoryArr.length; i++){
+
+                // create a <li> for each one.
+                var listItem = document.createElement("li");
+
+                // add the item text
+                listItem.innerHTML = categoryArr[i];
+
+                // add listItem to the listElement
+                listElement.appendChild(listItem);
+
+            }
+        }
+
+    </script>
 </head>
 <body>
 	<?php include 'header.php';
-		$servername = "localhost";
-		$username = "jsamelson";
-		$password = "database";
-		// Create connection
-		$conn = mysqli_connect($servername, $username, $password);
-
-		// Check connection
-		if (!$conn) {
-		    die("Connection failed: " . mysqli_connect_error());
-		} 
 
 		//include 'scraper.php';
 	?>
 
+	<div class="mainScreen" style="color:#0000FF">
+		<h3>Product Categories:</h3>
+		<script type="text/javascript">
+			makeCategoryList();
+		</script> 
+	</div>
+
 	<div class="divContainer">
-		<div class="mainScreen" style="color:#0000FF">
-			<h3>This is a heading</h3>
-			<p>This is a paragraph.</p>
-		</div>
 
 		<div class="login" style="border: 1px solid black">
 			<h3>Customer Login</h3><br>
@@ -43,22 +115,6 @@
 		<div style="clear: both;" class="clear"></div>
 	</div>
 	
-
-
-<!--
-    <a href="http://jquery.com/">jQuery</a>
-    <script src="jquery-2.1.1.js"></script>
-    <script>
- 
-    $( document ).ready(function() {
-        $( "a" ).click(function( event ) {
-            alert( "The link will no longer take you to jquery.com" );
-            event.preventDefault();
-        });
-    });
- 
-    </script>
--->
 
 
     <?php include 'footer.php'; ?>

@@ -48,6 +48,7 @@
          //create product Table
         $createProduct = "create table product(
             productid INT(10) UNSIGNED AUTO_INCREMENT,
+            name varchar(40) NOT NULL,
             price FLOAT UNSIGNED,
             categoryid INT(10) unsigned,
             isonsale BOOLEAN,
@@ -319,10 +320,6 @@
          $subsubsite[$type[0][0]] = $collections[0][$x];
        }
     array_push($typeArr['wholesale'], $subsubsite); //
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     //print_r($typeArr); //printing the filled associative array
     insertProductTypes($typeArr);  //populate the sql database PRODUCTCATEGORY, THIS IS THE RIGHT CODE
     
@@ -351,19 +348,6 @@
            <div class="imgcont loadingimg">
        
             <a href="/collections/asparagus-broccoli-cauliflower/products/asparagus" class="image-inner-wrap ">
-<<<<<<< Updated upstream
-				
-				
-			  <img src="//cdn.shopify.com/s/files/1/0206/9470/products/asparagus_1_093193e3-a081-4e35-93c6-2a2be62730d5_compact.jpeg?v=1409621749" alt="Asparagus (bunch)" />
-			 
-              <div class="salecontainer">
-				<span class="sale">			
-					<small>from</small> $1.69
-    				
-    				
-				</span>
-			  </div>
-=======
                 
                 
               <img src="//cdn.shopify.com/s/files/1/0206/9470/products/asparagus_1_093193e3-a081-4e35-93c6-2a2be62730d5_compact.jpeg?v=1409621749" alt="Asparagus (bunch)" />
@@ -375,7 +359,6 @@
                     
                 </span>
               </div>
->>>>>>> Stashed changes
             </a>
     </div>
     <p class="title"><a href="/collections/asparagus-broccoli-cauliflower/products/asparagus">Asparagus (bunch)</a></p>
@@ -387,9 +370,13 @@
     function insertProductTypes($associativeArrayArray){
         //open connection
            $servername = "localhost";
-        $username = "jchen127";
-        $password = "KbZFqBcZCy29b3Lx";
-        $dbname = "mydb";
+        //$username = "jchen127";
+        //password = "KbZFqBcZCy29b3Lx";
+        //$dbname = "mydb";
+        $username = "jsamelson";
+        $password = "database";
+        $dbname = "GroceryDelivery";
+
         $conn = new mysqli($servername, $username, $password, $dbname);
         // Check connection
         if ($conn->connect_error) {
@@ -433,10 +420,6 @@
         //close the connection
         $conn->close();
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     
     function estabConnect(){
         //main

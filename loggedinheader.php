@@ -1,10 +1,13 @@
 <html>
 	<head><title>Nom.com</title></head>
 	<body>
-		<img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center">
+		<a href="loggedinhome.html"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></a>
 		<br><br>
 		<div align="left">
 			<a href="productsearch.html">Search Products</a>
+			<form action="loginproductsearch.html" method="get">
+				<input type="text" name="searchtext">
+			</form>
 
 			<script src="jquery-2.1.1.js">
 				$( document ).ready(function() {

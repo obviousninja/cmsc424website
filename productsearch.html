@@ -13,6 +13,7 @@
 			$servername = "localhost";
 			$username = "jsamelson";
 			$password = "database";
+			$database = "GroceryDelivery";
 			// Create connection
 			$conn = mysqli_connect($servername, $username, $password);
 
@@ -21,13 +22,14 @@
 			    die("Connection failed: " . mysqli_connect_error());
 			}
 
-			$sql = "SELECT * FROM GroceryDelivery.Test";
+			$searchText = $_GET["searchtext"];
+			$sql = "SELECT * FROM $database.product WHERE name LIKE '%$searchText%'";
 			$result = mysqli_query($conn, $sql);
 
 			if ($result && mysqli_num_rows($result) > 0) {
 			    // output data of each row
 			    while($row = mysqli_fetch_assoc($result)) {
-			        echo "lastname: " . $row["LastName"]. " - firstname: " . $row["FirstName"] . "<br>";
+			        echo "Product name: " . $row["name"]. " - price: " . $row["price"] . "<br>";
 			    }
 			} else {
 			    echo "0 results";

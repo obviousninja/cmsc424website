@@ -16,11 +16,7 @@
 
 	echo $email . "; " . $password . '<br>';
 
-	$sql = //"SELECT * FROM $database.Test";
-	"SELECT * FROM $database.customer c WHERE c.email = '$email' AND c.password = '$password'";
-
-		//"SELECT * FROM '$database'.Test t WHERE t.FirstName = '$email' AND t.LastName = '$password'";
-		//"INSERT INTO '$database'.TEST VALUES ($email, $password)";
+	$sql = "SELECT * FROM $database.customer c WHERE c.email = '$email' AND c.password = '$password'";
 	echo $sql . '<br>';
 	$result = mysqli_query($conn, $sql);
 
@@ -31,7 +27,7 @@
 		while($row = mysqli_fetch_assoc($result)) {
 			//echo "lastname: " . $row["LastName"]. " - firstname: " . $row["FirstName"] . "<br>";
 			echo "Welcome!";
-
+			//localStorage.setItem('label', 'value');
 			header('Location: loggedinhome.html');
 		}
 	} else {
