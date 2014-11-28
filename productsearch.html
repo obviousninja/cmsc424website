@@ -1,6 +1,99 @@
 <html>
 	<head>
 		<title>Nom.com</title>
+		<script type="text/javascript">
+			function showSearchResults() {
+				var results = 
+				<?php
+					$servername = "localhost";
+					$username = "jsamelson";
+					$password = "database";
+					$database = "GroceryDelivery";
+					// Create connection
+					$conn = mysqli_connect($servername, $username, $password);
+
+					// Check connection
+					if (!$conn) {
+					    die("Connection failed: " . mysqli_connect_error());
+					}
+
+					$searchText = $_GET["searchtext"];
+					if (!$searchText) {
+						echo "No search text!<br>";
+						exit();
+					}
+
+					$lowerSearchText = strtolower($searchText);
+					$sql = "SELECT * FROM $database.product p, $database.productcategory c WHERE p.categoryid = c.categoryid 
+								AND (LOWER(name) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
+					$result = mysqli_query($conn, $sql);
+
+					$returnStr = "[";
+
+					if ($result && mysqli_num_rows($result) > 0) {
+					    // output data of each row
+					    while($row = mysqli_fetch_assoc($result)) {
+					        //echo "Product name: " . $row["name"]. " - price: " . $row["price"] . " - category: " . $row["category"] . " - subcategory: " . $row["subcategory"] . "<br>";
+					    	$saleprice = $row["saleprice"];
+					    	if (!$saleprice) {
+					    		$saleprice = "null";
+					    	}
+
+					        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["name"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . "}, \n";
+					    }
+					} else {
+					    echo "0 results";
+					}
+
+					mysqli_close($conn);
+
+					$returnStr = $returnStr . "]";
+					echo $returnStr;
+				?>;
+
+				console.log(results);
+
+				var listContainer = document.createElement("div"); 
+
+				for (var i = 0; i < results.length; i++) {
+					var item = results[i];
+
+					// Make the list itself which is a <ul>
+		            var listElement = document.createElement("div");
+		            listElement.setAttribute("id", item["name"]);
+		            listElement.setAttribute("style", "border: 1px solid black; margin:15px 15px 0px 15px");
+
+		            listContainer.appendChild(listElement);
+
+		            for (var property in item) {
+					    if (item.hasOwnProperty(property)) {
+			                var listItem = document.createElement("p");
+
+			                if (property === "name") {
+			                	listItem.innerHTML = item[property];
+			                } else if (property === "price") {
+			                	listItem.innerHTML = "$" + item[property];
+			                } else {
+			                	//listItem.innerHTML = item[property];
+			                }
+
+			                //<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onclick=\"document.getElementById('" + property + "').style.display='none';\" href=\"#\" id=\"showsubcategory\" >" + property + "</a>";
+
+			                // add listItem to the listElement
+			                listElement.appendChild(listItem);
+		            	}
+
+		            }
+		            listElement.innerHTML += "Quantity: <select name=\"thelist\"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> ";
+		            listElement.innerHTML += "<a id=\"" + "add" + item["name"] + "\" href=\"#\">Add To Cart</a>";
+				}
+	            
+
+	            // add it to the page
+	            document.getElementsByTagName("body")[0].appendChild(listContainer);
+
+			}
+		</script>
 	</head>
 
 	<body>
@@ -9,34 +102,9 @@
 
 		<p>You can do some product searching here!</p>
 
-		<?php
-			$servername = "localhost";
-			$username = "jsamelson";
-			$password = "database";
-			$database = "GroceryDelivery";
-			// Create connection
-			$conn = mysqli_connect($servername, $username, $password);
-
-			// Check connection
-			if (!$conn) {
-			    die("Connection failed: " . mysqli_connect_error());
-			}
-
-			$searchText = $_GET["searchtext"];
-			$sql = "SELECT * FROM $database.product WHERE name LIKE '%$searchText%'";
-			$result = mysqli_query($conn, $sql);
-
-			if ($result && mysqli_num_rows($result) > 0) {
-			    // output data of each row
-			    while($row = mysqli_fetch_assoc($result)) {
-			        echo "Product name: " . $row["name"]. " - price: " . $row["price"] . "<br>";
-			    }
-			} else {
-			    echo "0 results";
-			}
-
-			mysqli_close($conn);
-		?>
+		<script type="text/javascript">
+			showSearchResults();
+		</script>		
 		  
 		<?php include 'footer.php'; ?>
 
