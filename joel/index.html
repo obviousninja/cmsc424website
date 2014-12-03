@@ -8,12 +8,13 @@
 
         // wait for the page to load
         function makeCategoryList(){
+        	console.log("HERE");
             var categoryArr = 
             <?php 
             	$servername = "localhost";
-				$username = "jsamelson";
-				$password = "database";
-				$database = "GroceryDelivery";
+				$username = "jchen127";
+		        $password = "KbZFqBcZCy29b3Lx";
+		        $database = "myDB";
 				// Create connection
 				$conn = mysqli_connect($servername, $username, $password);
 
@@ -209,7 +210,7 @@
 <body>
 	<?php include 'header.php';
 
-		//include 'scraper.php';
+		//include 'scraperV3.php';
 	?>
 
 

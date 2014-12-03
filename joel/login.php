@@ -1,8 +1,8 @@
 <?php
 	$servername = "localhost";
-	$username = "jsamelson";
-	$password = "database";
-	$database = "GroceryDelivery";
+	$username = "jchen127";
+    $password = "KbZFqBcZCy29b3Lx";
+    $database = "myDB";
 	// Create connection
 	$conn = mysqli_connect($servername, $username, $password);
 
@@ -27,8 +27,9 @@
 		while($row = mysqli_fetch_assoc($result)) {
 			//echo "lastname: " . $row["LastName"]. " - firstname: " . $row["FirstName"] . "<br>";
 			echo "Welcome!";
+			$cid = $row["customerid"];
 			//localStorage.setItem('label', 'value');
-			header('Location: loggedinhome.html');
+			header('Location: loggedinhome.html?customerid=' . $cid);
 		}
 	} else {
 		echo "0 results; bad login";

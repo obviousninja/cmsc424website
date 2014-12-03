@@ -5,11 +5,11 @@
     <style href="test.css"></style>
 </head>
 <body>
-	<?php include 'loggedinheader.php';
+	<?php 
 		$servername = "localhost";
-		$username = "jsamelson";
-		$password = "database";
-		$database = "GroceryDelivery";
+		$username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $database = "myDB";
 		// Create connection
 		$conn = mysqli_connect($servername, $username, $password);
 
@@ -18,6 +18,12 @@
 		    die("Connection failed: " . mysqli_connect_error());
 		} 
 
+		$cid = $_GET["customerid"];
+		echo "CUSTOMER ID: " . $cid;
+		$_SESSION['cid']   = $cid;
+		echo "CUSTOMER ID in SESSION: " . $_SESSION['cid'];
+
+		include 'loggedinheader.php';
 		//include 'scraper.php';
 	?>
 

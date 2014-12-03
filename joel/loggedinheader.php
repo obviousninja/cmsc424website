@@ -1,29 +1,24 @@
 <html>
 	<head><title>Nom.com</title></head>
 	<body>
+		<?php
+		    echo "CID in header: " . $_SESSION['cid'] . "<br>";
+		    echo "SearchText in header: " . $_SESSION['searchtext']; 
+		?>
+
 		<a href="loggedinhome.html"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></a>
 		<br><br>
 		<div align="left">
-			<a href="productsearch.html">Search Products</a>
+			<a href="loginproductsearch.html">Search Products</a>
 			<form action="loginproductsearch.html" method="get">
-				<input type="text" name="searchtext">
+				<input type="text" name="searchtext" value='<?php echo $_SESSION['searchtext']; ?>'>
+				<input type="text" name="customerid" value='<?php echo $_SESSION['cid'] ?>' style="display:none"/>
+				<input type="submit" value="Search"/>
 			</form>
 
-			<script src="jquery-2.1.1.js">
-				$( document ).ready(function() {
-		 
-				    $( "a" ).click(function( event ) {
-				 
-				        alert( "As you can see, the link no longer took you to jquery.com" );
-	        			event.preventDefault();
-				 
-				    });
-		 
-				});
-			</script>
 		</div>
 		<div align="right">
-			<a href="https://google.com/">View Cart</a>
+			<a href="viewcart.html?customerid=<?php echo $_SESSION['cid'] ?>">View Cart</a>
 			<a href="https://google.com/">View Orders</a>
 			<a href="https://google.com/">Transaction History</a>
 			<a href="index.html/">Update Profile</a>
@@ -32,7 +27,4 @@
 
 		<hr>
 
-	<?php
-	    
-
-	?>
+	

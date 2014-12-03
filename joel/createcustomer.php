@@ -1,8 +1,8 @@
 <?php
 	$servername = "localhost";
-	$username = "jsamelson";
-	$password = "database";
-	$database = "GroceryDelivery";
+	$username = "jchen127";
+    $password = "KbZFqBcZCy29b3Lx";
+    $database = "myDB";
 	// Create connection
 	$conn = mysqli_connect($servername, $username, $password);
 
@@ -100,7 +100,7 @@
 						echo "Query failed!<br>";
 					} else {
 						echo "Successfully updated current basket for the new customer!<br>";
-						header('Location: loggedinhome.html');
+						header('Location: loggedinhome.html?customerid=' . $cid);
 						
 					}
 				} else {
