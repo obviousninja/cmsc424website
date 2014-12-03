@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nom.com</title>
+    <style href="test.css"></style>
+</head>
+<body>
+	<?php include 'loggedinheader.php';
+		$servername = "localhost";
+		$username = "jsamelson";
+		$password = "database";
+		$database = "GroceryDelivery";
+		// Create connection
+		$conn = mysqli_connect($servername, $username, $password);
+
+		// Check connection
+		if (!$conn) {
+		    die("Connection failed: " . mysqli_connect_error());
+		} 
+
+		//include 'scraper.php';
+	?>
+
+	<div class="divContainer">
+		<div class="mainScreen" style="color:#0000FF">
+			<h3>This is a heading</h3>
+			<p>This is a paragraph.</p>
+		</div>
+
+		<div style="clear: both;" class="clear"></div>
+	</div>
+	
+
+
+<!--
+    <a href="http://jquery.com/">jQuery</a>
+    <script src="jquery-2.1.1.js"></script>
+    <script>
+ 
+    $( document ).ready(function() {
+        $( "a" ).click(function( event ) {
+            alert( "The link will no longer take you to jquery.com" );
+            event.preventDefault();
+        });
+    });
+ 
+    </script>
+-->
+
+
+    <?php include 'footer.php'; ?>
+</body>
+</html>
+

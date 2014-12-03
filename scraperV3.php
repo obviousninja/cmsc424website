@@ -469,12 +469,6 @@
             die("Connection failed: " . $conn->connect_error);
         }
         
-        //construct query
-        //echo "<p>array keys<p>";
-       // print_r(array_keys($associativeArrayArray['fruit'][0])); //sub fruit array starts from ['fruit'][0]
-       // category varchar(40) NOT NULL,
-        //subcategory varchar(40) not null,
-        //$insertion = "INSERT INTO productcategory (category, subcategory) values ('sick', 'monster')";
         
         foreach($associativeArrayArray as $x => $x_value) { //grand type
           //construct query string
@@ -493,8 +487,13 @@
         //close the connection
         $conn->close();
     }
-
+    //populate the items
+    function display(){
+        echo "<p>i am a monster</p>";
+    }
     
+    
+    //function for creating the database and populating the products
     function estabConnect(){
         //main
         createDatabase();
@@ -504,7 +503,8 @@
         
     }
     
-    estabConnect();
+    
+    //estabConnect();  //this is the correct code. REENABLE for database repopulation
     
     //creating product category
     
