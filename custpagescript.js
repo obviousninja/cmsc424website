@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
   //below are reports, they are unordered list not orderedlist, i made a last min change of mind
-  var legend = "<legend>Administrator Reports</legend>";
+  var legend = "<legend>Customer Reports</legend>";
   var BWSIR = "<li><a href='AdminPage.html' target='ActionFrame'>best or worst selling item <b>X</b></a></li>";
   var ABVR = "<li><a href='http://www.google.com' target='ActionFrame'>average basket value report <b>X</b></a></li>";
   var CR = "<li><a href='http://www.google.com' target='ActionFrame'>customer report <b>X</b></a></li>";
@@ -17,7 +17,7 @@ $(document).ready(function(){
  
  // below are quests, they are unordered list not ordered list, i made a last min change of mind
  
- var requestLegend = "<legend>Administrator Request</legend>";
+ var requestLegend = "<legend>Customer Request</legend>";
  var RCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>remove customer request <b>X</b></a></li>";
  var DRCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>reactivate or deactivate customer request <b>X</b></a></li>";
  var ARPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add or remove product request <b>X</b></a></li>";
@@ -60,4 +60,3 @@ $(document).ready(function(){
   $("#CurrentAction").css({"top": curActionTop, "left": curActionLeft, "height": "100px", "width": displayWidth, "background-color":"#009933", "z-index":"1", "position":"absolute" ,"borderRadius":"25px", "border":"solid", "opacity": "0.5", "overflow":"auto"});
   
 });
-
