@@ -2,15 +2,15 @@
 $(document).ready(function(){
   //below are reports, they are unordered list not orderedlist, i made a last min change of mind
   var legend = "<legend>Customer Reports</legend>";
-  var BWSIR = "<li><a href='AdminPage.html' target='ActionFrame'>best or worst selling item <b>X</b></a></li>";
-  var ABVR = "<li><a href='http://www.google.com' target='ActionFrame'>average basket value report <b>X</b></a></li>";
-  var CR = "<li><a href='http://www.google.com' target='ActionFrame'>customer report <b>X</b></a></li>";
-  var DR = "<li><a href='http://www.google.com' target='ActionFrame'>delinquency report <b>X</b></a></li>";
-  var SPR = "<li><a href='http://www.google.com' target='ActionFrame'>suggested product report <b>X</b></a></li>";
-  var VOR = "<li><a href='http://www.google.com' target='ActionFrame'>view order report <b>X</b></a></li>";
-  var PSR = "<li><a href='http://www.google.com' target='ActionFrame'>product search report <b>X</b></a></li>";
-  var BR = "<li><a href='http://www.google.com' target='ActionFrame'>balance report <b>X</b></a></li>";
-  var THR = "<li><a href='http://www.google.com' target='ActionFrame'>transaction history report <b>X</b></a></li>";
+  var BWSIR = "<br><li><a href='header.php' target='ActionFrame'>best or worst selling item <b>X</b></a></li><br>";
+  var ABVR = "<li><a href='http://www.google.com' target='ActionFrame'>average basket value report <b>X</b></a></li><br>";
+  var CR = "<li><a href='http://www.google.com' target='ActionFrame'>customer report <b>X</b></a></li><br>";
+  var DR = "<li><a href='http://www.google.com' target='ActionFrame'>delinquency report <b>X</b></a></li><br>";
+  var SPR = "<li><a href='http://www.google.com' target='ActionFrame'>suggested product report <b>X</b></a></li><br>";
+  var VOR = "<li><a href='http://www.google.com' target='ActionFrame'>view order report <b>X</b></a></li><br>";
+  var PSR = "<li><a href='http://www.google.com' target='ActionFrame'>product search report <b>X</b></a></li><br>";
+  var BR = "<li><a href='http://www.google.com' target='ActionFrame'>balance report <b>X</b></a></li><br>";
+  var THR = "<li><a href='http://www.google.com' target='ActionFrame'>transaction history report <b>X</b></a></li><br>";
   $("body").css({"background-color":"#D3BDA7"});
   
   $("#olreport").append(legend, BWSIR, ABVR,CR,DR, SPR, VOR, PSR, BR, THR);
@@ -18,22 +18,22 @@ $(document).ready(function(){
  // below are quests, they are unordered list not ordered list, i made a last min change of mind
  
  var requestLegend = "<legend>Customer Request</legend>";
- var RCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>remove customer request <b>X</b></a></li>";
- var DRCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>reactivate or deactivate customer request <b>X</b></a></li>";
- var ARPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add or remove product request <b>X</b></a></li>";
- var POSRQ = "<li><a href='http://www.google.com' target='ActionFrame'>place on sale request <b>X</b></a></li>";
- var UDPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update delivery person request <b>X</b></a></li>";
- var CRPQ = "<li><a href='http://www.google.com' target='ActionFrame'>create report request <b>X</b></a></li>";
- var RCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>register customer request <b>X</b></a></li>";
- var UCPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update customer profile request <b>X</b></a></li>";
- var HORQ = "<li><a href='http://www.google.com' target='ActionFrame'>hold order request <b>X</b></a></li>";
- var ABRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add to basket request <b>X</b></a></li>";
- var MPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>make payment request <b>X</b></a></li>";
- var PORQ = "<li><a href='http://www.google.com' target='ActionFrame'>place order request <b>X</b></a></li>";
- var VORQ = "<li><a href='http://www.google.com' target='ActionFrame'>view order request <b>X</b></a></li>";
- var PSRQ = "<li><a href='http://www.google.com' target='ActionFrame'>product search request <b>X</b></a></li>";
- var BRQ = "<li><a href='http://www.google.com' target='ActionFrame'>balance request <b>X</b></a></li>";
- var THRQ = "<li><a href='http://www.google.com' target='ActionFrame'>transaction history request <b>X</b></a></li>";
+ var RCRQ = "<br><li><a href='http://www.google.com' target='ActionFrame'>remove customer request <b>X</b></a></li><br>";
+ var DRCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>reactivate or deactivate customer request <b>X</b></a></li><br>";
+ var ARPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add or remove product request <b>X</b></a></li><br>";
+ var POSRQ = "<li><a href='http://www.google.com' target='ActionFrame'>place on sale request <b>X</b></a></li><br>";
+ var UDPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update delivery person request <b>X</b></a></li><br>";
+ var CRPQ = "<li><a href='http://www.google.com' target='ActionFrame'>create report request <b>X</b></a></li><br>";
+ var RCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>register customer request <b>X</b></a></li><br>";
+ var UCPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update customer profile request <b>X</b></a></li><br>";
+ var HORQ = "<li><a href='http://www.google.com' target='ActionFrame'>hold order request <b>X</b></a></li><br>";
+ var ABRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add to basket request <b>X</b></a></li><br>";
+ var MPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>make payment request <b>X</b></a></li><br>";
+ var PORQ = "<li><a href='http://www.google.com' target='ActionFrame'>place order request <b>X</b></a></li><br>";
+ var VORQ = "<li><a href='http://www.google.com' target='ActionFrame'>view order request <b>X</b></a></li><br>";
+ var PSRQ = "<li><a href='http://www.google.com' target='ActionFrame'>product search request <b>X</b></a></li><br>";
+ var BRQ = "<li><a href='http://www.google.com' target='ActionFrame'>balance request <b>X</b></a></li><br>";
+ var THRQ = "<li><a href='http://www.google.com' target='ActionFrame'>transaction history request <b>X</b></a></li><br>";
  
  $("#olrequest").append(requestLegend, RCRQ, DRCRQ, ARPRQ, POSRQ, UDPRQ, CRPQ, RCRQ, UCPRQ, HORQ, ABRQ, MPRQ, PORQ, VORQ, PSRQ, BRQ, THRQ);
   
@@ -59,4 +59,8 @@ $(document).ready(function(){
   var curActionLeft = "40px";
   $("#CurrentAction").css({"top": curActionTop, "left": curActionLeft, "height": "100px", "width": displayWidth, "background-color":"#009933", "z-index":"1", "position":"absolute" ,"borderRadius":"25px", "border":"solid", "opacity": "0.5", "overflow":"auto"});
   
+   $("#shopNow").css({"textAlign":"center", "top":curActionTop, "left": displayWidth+300, "height":"100px", "width": "100px", "backgroundColor":"purple", "position":"absolute", "borderRadius":"50px", "border":"solid" });
+  $("#shopNow").click(function(){
+     window.open("shopItems.html", "_blank"); 
+  })
 });
