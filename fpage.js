@@ -11,6 +11,6 @@ $(document).ready(function(){
     $("#regbutton").css({"height":"20px", "width":"55px", "borderRadius":"10px","border":"groove", "backgroundColor":"#FFFFFF", "top":h, "left":wid, "position":"absolute"});
     
     $("#regbutton").click(function(){
-       window.open("", "_blank"); 
+       window.open("createcustomer.html", "_blank"); 
     });
 });
