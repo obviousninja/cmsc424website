@@ -49,6 +49,7 @@
             isonsale BOOLEAN,
             saleprice FLOAT unsigned,
             taxable BOOLEAN,
+            soldcount int(10) unsigned DEFAULT 0,
             PRIMARY KEY (productid),
             FOREIGN KEY (categoryid) references productcategory(categoryid)
         )ENGINE=INNODB";

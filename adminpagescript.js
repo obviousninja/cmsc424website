@@ -60,9 +60,6 @@ $(document).ready(function(){
   $("#CurrentAction").css({"top": curActionTop, "left": curActionLeft, "height": "100px", "width": displayWidth, "background-color":"#009933", "z-index":"1", "position":"absolute" ,"borderRadius":"25px", "border":"solid", "opacity": "0.5", "overflow":"auto"});
   
 
-  $("#shopNow").css({"textAlign":"center", "top":curActionTop, "left": displayWidth+300, "height":"100px", "width": "100px", "backgroundColor":"purple", "position":"absolute", "borderRadius":"50px", "border":"solid" });
-  $("#shopNow").click(function(){
-    
-  })
+
 });
 
