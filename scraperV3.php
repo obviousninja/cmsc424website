@@ -523,8 +523,14 @@
               echo "<br>";
              }
     }
+    function updateProductCount($productid, $num){
+        
+        
+    }
     
-    function bestSellingItem(){
+    function populateBestWorstReport(){
+        //get the current
+        
         
     }
     //estabConnect();  //this is the correct code. REENABLE for database repopulation
