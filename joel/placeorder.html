@@ -17,6 +17,8 @@
 				    die("Connection failed: " . mysqli_connect_error());
 				}
 
+				/* CHECK HERE IF DELIVERY PERSON IS AVAILABLE ON ROUTE!!!!!!!!!!!!!! */
+
 				$cid = $_GET["customerid"];
 
 				$sql = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p, $database.customer c WHERE c.customerid = $cid AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
@@ -29,7 +31,7 @@
 				    while($row = mysqli_fetch_assoc($result)) {
 				        //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
 	   
-				        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["name"] . "\"" . ",\n\"basketid\":" . $row["basketid"] . ",\n\"productid\":" . $row["productid"] . ",\n\"productname\":" . "\"" . $row["productname"] . "\"" . ",\n\"quantity\":" . "\"" . $row["productquantity"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $row["saleprice"] . ",\n\"imageurl\":" . "\"" . $row["imageurl"] . "\"" . "}, \n";
+				        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["name"] . "\"" . ",\n\"basketid\":" . $row["basketid"] . ",\n\"productid\":" . $row["productid"] . ",\n\"productname\":" . "\"" . $row["productname"] . "\"" . ",\n\"quantity\":" . "\"" . $row["productquantity"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $row["saleprice"] . "}, \n";
 				    }
 
 
@@ -57,28 +59,19 @@
 		            for (var property in item) {
 					    if (item.hasOwnProperty(property)) {
 			                var listItem = document.createElement("p");
-			                var needsTotal = false;
 
 			                if (property === "productname") {
 			                	listItem.innerHTML = item[property];
 			                } else if (property === "price") {
-			                	listItem.innerHTML = "Unit Cost: $" + item[property].toFixed(2);
-			                	needsTotal = true;
+			                	listItem.innerHTML = "$" + item[property].toFixed(2);
 			                } else if (property === "quantity") {
 			                	listItem.innerHTML = "Quantity: " + item[property];
-			                } else if (property === "imageurl") {
-			                	listItem.innerHTML = "<img src=" + item[property] + ">";
 			                }
 
 			                //<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onclick=\"document.getElementById('" + property + "').style.display='none';\" href=\"#\" id=\"showsubcategory\" >" + property + "</a>";
 
 			                // add listItem to the listElement
 			                listElement.appendChild(listItem);
-			                if (needsTotal) {
-				                var totalPriceItem = document.createElement("p");
-				                totalPriceItem.innerHTML = "Total Cost: $" + (item["price"]*item["quantity"]).toFixed(2);
-				                listElement.appendChild(totalPriceItem);
-				            }
 		            	}
 
 		            }
@@ -104,23 +97,19 @@
 	</head>
 	<body>
 		<?php 
-			$cid = $_GET["customerid"];
+			$cid = $_POST["customerid"];
 			echo "Get CID: " . $cid . "<br>";
-			$_SESSION["cid"] = $_GET["customerid"];
+			$_SESSION["cid"] = $_POST["customerid"];
 			$_SESSION["searchtext"] = "";
 
 			include 'loggedinheader.php';
 		?>
 
 		<script type="text/javascript">
-			generateList();
+			//generateList();
 		</script>
 
-		<form action="checkout.html" method="get">
-			<input type="text" name="customerid" value="<?php echo $_SESSION["cid"] ?>">
-			<input type="submit" value="Checkout">
-		</form>
-		
+		<button>Place Order</button>
 
 	</body>
 </html>

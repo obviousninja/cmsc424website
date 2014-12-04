@@ -35,6 +35,8 @@
 		//TODO Set relevant fields here
 	}
 
+	/* CHECK IF ADDRESS IS OUT OF DELIVERY RANGE!!!!!! */
+
 	//Insert new customer
 	$sql = "INSERT INTO $database.customer  VALUES (NULL, '$name', $age, '$sex', '$password', 0, '$paymentflag', '$creditcardnumber', '$ccexpiration', '$bankaccountnumber', '$bankroutingnumber', '$address', '$phonenumber', '$email', '$status', -1)";
 	echo $sql . "<br>";
@@ -100,7 +102,8 @@
 						echo "Query failed!<br>";
 					} else {
 						echo "Successfully updated current basket for the new customer!<br>";
-						header('Location: loggedinhome.html?customerid=' . $cid);
+						//echo "Customer ID: " . $cID;
+						header('Location: loggedinhome.html?customerid=' . $cID);
 						
 					}
 				} else {

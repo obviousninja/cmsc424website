@@ -22,6 +22,7 @@
 		echo "CUSTOMER ID: " . $cid;
 		$_SESSION['cid']   = $cid;
 		echo "CUSTOMER ID in SESSION: " . $_SESSION['cid'];
+		$_SESSION["searchtext"] = "";
 
 		include 'loggedinheader.php';
 		//include 'scraper.php';

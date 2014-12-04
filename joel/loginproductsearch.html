@@ -41,7 +41,7 @@
 					    		$saleprice = "null";
 					    	}
 
-					        $returnStr = $returnStr . "{" . "\"id\": " . $row["productid"] . ",\n\"name\": " . "\"" . $row["productname"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . "}, \n";
+					        $returnStr = $returnStr . "{" . "\"id\": " . $row["productid"] . ",\n\"name\": " . "\"" . $row["productname"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . ",\n\"imageurl\":" . "\"" . $row["imageurl"] . "\"" . "}, \n";
 					    }
 					} else {
 					    echo "0 results of products";
@@ -75,8 +75,8 @@
 			                	listItem.innerHTML = item[property];
 			                } else if (property === "price") {
 			                	listItem.innerHTML = "$" + item[property].toFixed(2);
-			                } else {
-			                	//listItem.innerHTML = item[property];
+			                } else if (property === "imageurl") {
+			                	listItem.innerHTML = "<img src=" + item[property] + ">";
 			                }
 
 			                //<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onclick=\"document.getElementById('" + property + "').style.display='none';\" href=\"#\" id=\"showsubcategory\" >" + property + "</a>";

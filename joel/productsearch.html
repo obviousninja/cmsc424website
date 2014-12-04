@@ -6,9 +6,9 @@
 				var results = 
 				<?php
 					$servername = "localhost";
-					$username = "jsamelson";
-					$password = "database";
-					$database = "GroceryDelivery";
+					$username = "jchen127";
+			        $password = "KbZFqBcZCy29b3Lx";
+			        $database = "myDB";
 					// Create connection
 					$conn = mysqli_connect($servername, $username, $password);
 
@@ -25,7 +25,7 @@
 
 					$lowerSearchText = strtolower($searchText);
 					$sql = "SELECT * FROM $database.product p, $database.productcategory c WHERE p.categoryid = c.categoryid 
-								AND (LOWER(name) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
+								AND (LOWER(p.productname) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
 					$result = mysqli_query($conn, $sql);
 
 					$returnStr = "[";
@@ -39,10 +39,10 @@
 					    		$saleprice = "null";
 					    	}
 
-					        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["name"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . "}, \n";
+					        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["productname"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . ",\n\"imageurl\":" . "\"" . $row["imageurl"] . "\"" . "}, \n";
 					    }
 					} else {
-					    echo "0 results";
+					    echo "0 results for products";
 					}
 
 					mysqli_close($conn);
@@ -72,9 +72,9 @@
 			                if (property === "name") {
 			                	listItem.innerHTML = item[property];
 			                } else if (property === "price") {
-			                	listItem.innerHTML = "$" + item[property];
-			                } else {
-			                	//listItem.innerHTML = item[property];
+			                	listItem.innerHTML = "$" + item[property].toFixed(2);
+			                } else if (property === "imageurl") {
+			                	listItem.innerHTML = "<img src=" + item[property] + ">";
 			                }
 
 			                //<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onclick=\"document.getElementById('" + property + "').style.display='none';\" href=\"#\" id=\"showsubcategory\" >" + property + "</a>";
@@ -84,8 +84,11 @@
 		            	}
 
 		            }
-		            listElement.innerHTML += "Quantity: <select name=\"thelist\"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> ";
+
+		            //ONLY FOR LOGGED IN CUSTOMERS
+		            /*listElement.innerHTML += "Quantity: <select name=\"thelist\"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> ";
 		            listElement.innerHTML += "<a id=\"" + "add" + item["name"] + "\" href=\"#\">Add To Cart</a>";
+		            */
 				}
 	            
 
