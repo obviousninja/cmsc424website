@@ -576,7 +576,7 @@
         
         
     }
-    
+    //generates best and worst report
     function populateBestWorstReport(){
         //get the current
      //open connection
@@ -671,6 +671,21 @@
         
         
         $conn->close();
+        
+    }
+    //generates average basket value report, take a param base on how many days. so for example 1 day or 200 days. upper range is not restricted
+    
+    function averageBasketValueReport($mDay){
+        echo "i got here like a champ";
+        //TODO calculate currentdate-mday
+        
+        //TODO retrieve the basketid that has lesser than current day, but greater than currentdate-mDay
+        
+        //TODO get the total number of basketids for average calculation
+        
+        //TODO get the basketItems of each basketid and get total associated with each basketid
+        
+        //
         
     }
     //estabConnect();  //this is the correct code. REENABLE for database repopulation
