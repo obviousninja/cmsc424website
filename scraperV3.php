@@ -523,14 +523,154 @@
               echo "<br>";
              }
     }
-    function updateProductCount($productid, $num){
+    
+    //takes productid and the number of sold
+    function updateProductCount($pid, $num){
+            //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        //retrieve the product with product id, and get the soldcount
+        $sqlcommand = "SELECT productid, soldcount from product where productid='$pid'";
+        $result = $conn->query($sqlcommand);
+        if ($result->num_rows > 0) {
+             while($row = $result->fetch_assoc()) {
+            echo "<br> pid: ". $row["productid"]. " - soldcount: ". $row["soldcount"] . "<br>";
+            if(is_int(intval($row["soldcount"]))=== true){
+                echo "sold count is an int";
+            }else{
+                echo "sold count is not an int";
+            }
+            //increment the sold count base on the $num
+            $newCount = intval($row["soldcount"])+$num;
+            echo "newCount" . $newCount;
+            
+              //update the new sold count associated with the product id
+              
+            $updatecommand = "update product set soldcount= '$newCount' where productid = '$pid'";
+            if ($conn->query($updatecommand) === TRUE) {
+    echo "Record updated successfully";
+} else {
+    echo "Error updating record: " . $conn->error;
+}
+           
+     }
+            
+        }else{
+            echo "no such product exist";
+        }
+        
+        $conn->close();
+        
+        
+        
+      
+        
         
         
     }
     
     function populateBestWorstReport(){
         //get the current
+     //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
         
+        $curworstnum = 100000; //default is -1 so it can be receptive to every other numbers
+        $worstArray = array();  //array that contains the names of the worst selling item
+        
+        $curbestnum = -1;
+        $bestArray = array();
+        $iterStop = 11;
+        $iterNow = 1;
+        //sql command for getting the product id, name and sold count
+        $sqlcommand = "select distinct productid, soldcount, productname from product";
+         $result = $conn->query($sqlcommand);
+          if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+            
+                
+                //echo "<br> pid: ". $row["productid"]. " - soldcount: ". $row["soldcount"] . "<br>";
+                //intval($row["soldcount"]) // sold count, type int
+                //$row['productid']  // type string
+                //$row['productname'] // type string
+                
+               // echo "product name: " . $row['productname'] . " productid: " . $row['productid'] . "sold count: " . $row["soldcount"] . "<br>";
+                $tempVal = $curworstnum;  //store the current worst number
+                    
+                if($curworstnum > intval($row["soldcount"])){
+                 //   echo "<br>soldcount" . intval($row["soldcount"]) . " ";
+                    $curworstnum = intval($row["soldcount"]); // current worst number if now the  intval number
+                   // echo "worstnum now:  " . $curworstnum . "<br>";
+                    //discard the curworst array accumulated so far
+                    $worstArray = array();
+                    
+                    //put the recent name into the curworst array
+                    array_push($worstArray, $row['productname']);
+                    
+                }else if($curworstnum == intval($row["soldcount"])){
+                    array_push($worstArray, $row['productname']);
+                }
+                
+                if($curbestnum < intval($row["soldcount"]) ){
+                    //curbestnum is lesser than the cur num, thus replace
+                    $curbestnum = intval($row["soldcount"]);
+                    
+                    //clear the curbest num array
+                    $bestArray = array();
+                    array_push($bestArray, $row["productname"]);
+                }else if($curbestnum == intval($row["soldcount"])){
+                    array_push($bestArray, $row["productname"]);
+                    
+                }
+                
+                
+                
+                //stop pre-emptively for my case because i want it to stop and not going forever
+                $iterNow +=1;
+                if($iterStop == $iterNow){
+                    break;
+                }
+                
+            }
+           
+            //this cannot be allowed, if the best num and the worst num are the same, then
+            //worstarray are erased.
+            if($curbestnum = $curworstnum){
+                $worstArray = array();
+            }
+            
+            echo "<h2>The Following Are The Best Selling and the Worst Selling Items: </h2>";
+             echo "<br>Worst Selling:";
+             for($x = 0; $x< count($worstArray); $x++){
+                
+                echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;" . $worstArray[$x] . " ";
+             }
+             echo "<br>Best Selling";
+             for($x = 0; $x < count($bestArray); $x++){
+                 echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;" . $bestArray[$x] . " ";
+             }
+           
+          }
+        
+        
+        
+        
+        $conn->close();
         
     }
     //estabConnect();  //this is the correct code. REENABLE for database repopulation

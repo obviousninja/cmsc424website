@@ -2,7 +2,7 @@
 $(document).ready(function(){
   //below are reports, they are unordered list not orderedlist, i made a last min change of mind
    var legend = "<legend>Administrator Reports</legend>";
-  var BWSIR = "<br><li><a href='header.php' target='ActionFrame'>best or worst selling item <b>X</b></a></li><br>";
+  var BWSIR = "<br><li><a href='bwreport.php' target='ActionFrame'>best or worst selling item</a></li><br>";
   var ABVR = "<li><a href='http://www.google.com' target='ActionFrame'>average basket value report <b>X</b></a></li><br>";
   var CR = "<li><a href='http://www.google.com' target='ActionFrame'>customer report <b>X</b></a></li><br>";
   var DR = "<li><a href='http://www.google.com' target='ActionFrame'>delinquency report <b>X</b></a></li><br>";
