@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Profile</title>
+</head>
+<body>
+	<?php
+		$cid = $_GET["customerid"];
+		echo "Get CID: " . $cid . "<br>";
+		$_SESSION["cid"] = $_GET["customerid"];
+		$_SESSION["searchtext"] = $_GET["searchtext"];
+
+		include 'loggedinheader.php';
+
+
+		$servername = "localhost";
+		$username = "jchen127";
+	    $password = "KbZFqBcZCy29b3Lx";
+	    $database = "myDB";
+		// Create connection
+		$conn = mysqli_connect($servername, $username, $password);
+
+		// Check connection
+		if (!$conn) {
+		    die("Connection failed: " . mysqli_connect_error());
+		}
+
+		$sql = "SELECT * FROM $database.customer WHERE customerid = $cid";
+		$result = mysqli_query($conn, $sql);
+
+		if ($result && mysqli_num_rows($result) > 0) {
+			$name = NULL;
+			$age = NULL;
+			$phonenumber = NULL;
+			$email = NULL;
+			$password = NULL;
+			$address = NULL;
+			$balance = 0;
+			$sex = NULL;
+			$paymentflag = NULL;
+			$creditcardnumber = NULL;
+			$ccexpiration = NULL;
+			$bankaccountnumber = NULL;
+			$bankroutingnumber = NULL;
+
+		    while($row = mysqli_fetch_assoc($result)) {
+		    	$name = $row["name"];
+				$age = $row["age"];
+				$phonenumber = $row["phonenumber"];
+				$email = $row["email"];
+				$password = $row["password"];
+				$address = $row["address"];
+				$sex = $row["sex"];
+				$balance = $row["balance"];
+				$paymentflag = $row["paymentflag"];
+				$creditcardnumber = $row["creditcardnumber"];
+				$ccexpiration = $row["ccexpiration"];
+				$bankaccountnumber = $row["bankaccountnumber"];
+				$bankroutingnumber = $row["bankroutingnumber"];
+		    }
+		    $nameArr = explode(", ", $name, 2);
+		    $addressArr = explode(", ", $address);
+		    $stateZip = explode(" ", $addressArr[2]);
+
+		    echo "<form action=\"updateprofile.php\" method=\"post\" align=\"left\">";
+		    echo "<fieldset>";
+		    echo "<legend>Customer Information</legend>";
+		    echo "<br>";
+		    echo "First Name: <input type=\"text\" name=\"firstname\" value=\"" . $nameArr[1] . "\"><br>";
+		    echo "Last Name: <input type=\"text\" name=\"lastname\" value=\"" . $nameArr[0] . "\"><br>";
+		    echo "Age: <input type=\"number\" name=\"age\" value=" . $age . "><br>";
+		    echo "Sex:<br>";
+		    if ($sex === 'm') {
+		    	echo "<input type=\"radio\" name=\"sex\" value=\"m\" checked> Male<br>";
+				echo "<input type=\"radio\" name=\"sex\" value=\"f\"> Female<br>";
+		    } else {
+		    	echo "<input type=\"radio\" name=\"sex\" value=\"m\"> Male<br>";
+				echo "<input type=\"radio\" name=\"sex\" value=\"f\" checked> Female<br>";
+		    }
+		    echo "Phone Number: <input type=\"tel\" maxlength=\"10\" name=\"phonenumber\" value=" . $phonenumber . "><br>";
+		    echo "Email: <input type=\"email\" name=\"email\" value=\"" . $email . "\"><br>";
+		    echo "Password: <input type=\"password\" name=\"password\" value=\"" . $password . "\"><br><br>";
+		    echo "Address: <input type=\"text\" name=\"address\" value=\"" . $addressArr[0] . "\"><br>";
+		    echo "City: <input type=\"text\" name=\"city\" value=\"" . $addressArr[1] . "\">";
+		    echo "State: <input type=\"text\" name=\"state\" value=\"" . $stateZip[0] . "\">";
+		    echo "Zip Code: <input type=\"number\" name=\"zipcode\" value=" . $stateZip[1] . "><br><br>";
+		    echo "<div>";
+		    echo "Preferred Payment Method:<br>";
+
+		    if ($paymentflag == 1) {
+		    	echo "<a href=\"javascript:ShowContent('creditcardinfo')\"><input type=\"radio\" name=\"payment\" value=\"creditcard\"> Credit Card</a><br>";
+		    	echo "<a href=\"javascript:HideContent('creditcardinfo')\"><input type=\"radio\" name=\"payment\" value=\"check\" checked> Check</a><br>";
+		    } else {
+		    	echo "<a href=\"javascript:ShowContent('creditcardinfo')\"><input type=\"radio\" name=\"payment\" value=\"creditcard\" checked> Credit Card</a><br>";
+		    	echo "<a href=\"javascript:HideContent('creditcardinfo')\"><input type=\"radio\" name=\"payment\" value=\"check\"> Check</a><br>";
+		    }
+		    
+		    echo "</div>";
+
+		    echo "<div id=\"creditcardinfo\" style=\"display:none\">";
+		    echo "Credit Card Number: <input type=\"number\" name=\"creditcardnumber\" value=" . $creditcardnumber . "><br>";
+		    echo "Expiration Date: <input type=\"date\" name=\"ccexpiration\" value=" . $ccexpiration . "><br>";
+		    echo "</div>";
+
+		    echo "<br><br>";
+		    echo "<input type=\"number\" name=\"customerid\" value=" . $cid . ">";
+		    echo "<input type=\"submit\" value=\"Update Profile\"><br>";
+		    echo "</fieldset>";
+		    echo "</form>";
+
+		} else {
+			echo "Failed to find customer!<br>";
+		}
+
+
+	?>
+
+
+
+	<script type="text/javascript" language="JavaScript"><!--
+		function HideContent(d) {
+			document.getElementById(d).style.display = "none";
+		}
+		function ShowContent(d) {
+			document.getElementById(d).style.display = "block";
+		}
+		function ReverseDisplay(d) {
+			if(document.getElementById(d).style.display == "none") { 
+				document.getElementById(d).style.display = "block"; 
+			} else { 
+				document.getElementById(d).style.display = "none"; 
+			}
+		}
+	//--></script>
+
+</body>
+
+

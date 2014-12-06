@@ -1,99 +1,6 @@
 <html>
 	<head>
 		<title>Nom.com</title>
-		<script type="text/javascript">
-			function generateList() {
-				var entries = 
-				<?php
-				$servername = "localhost";
-				$username = "jchen127";
-		        $password = "KbZFqBcZCy29b3Lx";
-		        $database = "myDB";
-				// Create connection
-				$conn = mysqli_connect($servername, $username, $password);
-
-				// Check connection
-				if (!$conn) {
-				    die("Connection failed: " . mysqli_connect_error());
-				}
-
-				/* CHECK HERE IF DELIVERY PERSON IS AVAILABLE ON ROUTE!!!!!!!!!!!!!! */
-
-				$cid = $_GET["customerid"];
-
-				$sql = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p, $database.customer c WHERE c.customerid = $cid AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
-				$result = mysqli_query($conn, $sql);
-
-				$returnStr = "[";
-
-				if ($result && mysqli_num_rows($result) > 0) {
-				    // output data of each row
-				    while($row = mysqli_fetch_assoc($result)) {
-				        //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
-	   
-				        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["name"] . "\"" . ",\n\"basketid\":" . $row["basketid"] . ",\n\"productid\":" . $row["productid"] . ",\n\"productname\":" . "\"" . $row["productname"] . "\"" . ",\n\"quantity\":" . "\"" . $row["productquantity"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $row["saleprice"] . "}, \n";
-				    }
-
-
-				} else {
-				    echo "0 results for finding cart!<br>";
-				}
-
-				mysqli_close($conn);
-
-				$returnStr = $returnStr . "]";
-				echo $returnStr;
-				?>
-
-				var listContainer = document.createElement("div"); 
-
-				for (var i = 0; i < entries.length; i++) {
-					var item = entries[i];
-
-		            var listElement = document.createElement("div");
-		            listElement.setAttribute("id", item["productid"]);
-		            listElement.setAttribute("style", "border: 1px solid black; margin:15px 15px 0px 15px");
-
-		            listContainer.appendChild(listElement);
-
-		            for (var property in item) {
-					    if (item.hasOwnProperty(property)) {
-			                var listItem = document.createElement("p");
-
-			                if (property === "productname") {
-			                	listItem.innerHTML = item[property];
-			                } else if (property === "price") {
-			                	listItem.innerHTML = "$" + item[property].toFixed(2);
-			                } else if (property === "quantity") {
-			                	listItem.innerHTML = "Quantity: " + item[property];
-			                }
-
-			                //<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onclick=\"document.getElementById('" + property + "').style.display='none';\" href=\"#\" id=\"showsubcategory\" >" + property + "</a>";
-
-			                // add listItem to the listElement
-			                listElement.appendChild(listItem);
-		            	}
-
-		            }
-
-		            var removeButton = document.createElement("form");
-					removeButton.setAttribute("id", item["productid"] + "form");
-					removeButton.setAttribute("name", item["productid"] + "form");
-					//removeButton.setAttribute("action", "removefromcart.php");
-					removeButton.setAttribute("method", "get");
-					listElement.appendChild(removeButton);
-
-					removeButton.innerHTML = "<input type=\"text\" name=\"customerid\" value='<?php echo $_GET['customerid'] ?>'/><input type=\"text\" name=\"productid\" value='" + item["productid"] + "'/><input type=\"submit\" value=\"Remove\"/>";
-
-		            /*listElement.innerHTML += "<a id=\"" + "remove" + item["name"] + "\" onclick=\"<?php include 'addtocart.php' ?>\" href=\"#\">Remove</a>";*/
-				}
-	            
-
-	            // add it to the page
-	            document.getElementsByTagName("body")[0].appendChild(listContainer);
-
-			}
-		</script>
 	</head>
 	<body>
 		<?php 
@@ -103,13 +10,116 @@
 			$_SESSION["searchtext"] = "";
 
 			include 'loggedinheader.php';
+
+
+			$servername = "localhost";
+			$username = "jchen127";
+	        $password = "KbZFqBcZCy29b3Lx";
+	        $database = "myDB";
+			// Create connection
+			$conn = mysqli_connect($servername, $username, $password);
+
+			// Check connection
+			if (!$conn) {
+			    die("Connection failed: " . mysqli_connect_error());
+			}
+
+			/* CHECK HERE IF DELIVERY PERSON IS AVAILABLE ON ROUTE!!!!!!!!!!!!!! */
+
+			$cid = $_POST["customerid"];
+			$bid = $_POST["basketid"];
+			$totalitemcost = $_POST["totalitemcost"];
+			$costwithtax = $_POST["costwithtax"];
+			$deliverycharge = $_POST["deliverycharge"];
+			$tripduration = $_POST["tripduration"];
+			$bankaccountnumber = $_POST["bankaccountnumber"];
+			$bankroutingnumber = $_POST["bankroutingnumber"];
+
+			$totaltransactioncost = $costwithtax + $deliverycharge;
+
+			$date = date('Y-m-d H:i:s', time());
+			echo "DATE: " . $date . "<br>";
+			echo "DURATION: " . $tripduration . "<br>";
+			$timeofarrival = date("Y-m-d H:i:s", time() + $tripduration);
+			echo "Estimated Time of Delivery: " . $timeofarrival . "<br>";
+
+			$sql = "UPDATE $database.customer SET bankaccountnumber = '$bankaccountnumber', bankroutingnumber = '$bankroutingnumber' WHERE customerid = $cid";
+			$result = mysqli_query($conn, $sql);
+
+			/* Make bill */
+			if (!$result) {
+				echo "Update of customer failed!<br>";
+			} else {
+			    // output data of each row
+			    echo "Customer update success!<br>";
+
+			    $sqlTrans = "INSERT INTO $database.transaction VALUES (NULL, $bid, $cid, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
+			    $resultTrans = mysqli_query($conn, $sqlTrans);
+
+			    if (!$resultTrans) {
+			    	echo "Insertion of transaction failed!<br>";
+			    } else {
+			    	echo "Transaction insertion success!<br>";
+
+				    $sqlGetTransID = "SELECT transactionid FROM $database.transaction WHERE basketid = $bid";
+				    $resultGetTransID = mysqli_query($conn, $sqlGetTransID);
+
+				    if ($resultGetTransID && mysqli_num_rows($resultGetTransID) > 0) {
+				    	$transID = -1;
+					    // output data of each row
+					    while($row = mysqli_fetch_assoc($resultGetTransID)) {
+					    	$transID = $row["transactionid"];
+					    	echo "Found transID: " . $transID . "<br>";
+					    }
+
+					    $sqlBill = "INSERT INTO $database.bill VALUES (NULL, $transID, $totalitemcost, $costwithtax, $deliverycharge, NULL, 0)";
+					    $resultBill = mysqli_query($conn, $sqlBill);
+
+					    if (!$resultBill) {
+					    	echo "Insertion of bill failed!<br>";
+					    } else {
+					    	echo "Bill insertion success!<br>";
+					    	echo mysql_info() . "<br>";
+
+					    	/* Update customer balance and set new current basket */
+					    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, 0, '$date')"; 
+					    	$resultBasket = mysqli_query($conn, $sqlBasket);
+
+					    	if (!$resultBasket) {
+					    		echo "Basket creation failed!<br>";
+					    	} else {
+					    		echo "Basket creation successful!<br>";
+
+					    		$sqlBalance = "UPDATE $database.customer SET balance = balance - $totaltransactioncost, currentbasket = LAST_INSERT_ID() WHERE customerid = $cid";
+					    		$resultBalance = mysqli_query($conn, $sqlBalance);
+
+					    		if ($resultBalance) {
+					    			echo "Balance update successful!<br>";
+
+					    			/* update product count??!!!!!!!!!!!!!!!! 
+					    			$sqlProduct = "UPDATE $database.product SET soldcount = soldcount + ?? WHERE productid in (SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid)";
+					    			$resultProduct = mysqli_query($conn, $sqlProduct);
+
+					    			if ($resultProduct && mysqli_num_rows($resultProduct) > 0) {
+
+					    			} else {
+					    				echo "No products updated<br>";
+					    			}*/
+
+					    		} else {
+					    			echo "Balance and currentbasket update failed!<br>";
+					    		}
+					    	}
+					    }
+					} else {
+						echo "Finding transaction ID failed!<br>";
+					}
+				}
+			}
+
+			mysqli_close($conn);
 		?>
 
-		<script type="text/javascript">
-			//generateList();
-		</script>
-
-		<button>Place Order</button>
 
 	</body>
 </html>

@@ -127,23 +127,38 @@
 
 			    	}
 
-			    	echo "Total: $" . money_format('%i', $totalPrice) . "<br>";
+			    	echo "Total: $" . money_format('%i', round($totalPrice, 2)) . "<br>";
 				    echo "Tax: $" . money_format('%i', $tax) . "<br>";
-				    echo "Total with Tax: $" . money_format('%i', $priceWithTax) . "<br><br>";
+				    echo "Total with Tax: $" . money_format('%i', round($priceWithTax, 2)) . "<br><br>";
 				    echo "Delivery Address: " . $custAddress . "<br>";
 			    	echo "Delivery price: $" . money_format('%i', $price) . "<br>";
-			    	echo "Total Price: $" . money_format('%i', $priceWithTax + $price) . "<br>";
-			    	$_SESSION['totalitemcost'] = $totalPrice;
-			    	$_SESSION['costwithtax'] = $priceWithTax;
+			    	echo "Total Price: $" . money_format('%i', round($priceWithTax + $price, 2)) . "<br>";
+			    	$_SESSION['totalitemcost'] = round($totalPrice, 2);
+			    	$_SESSION['costwithtax'] = round($priceWithTax, 2);
 			    	$_SESSION['deliverycharge'] = $price;
 			    	$_SESSION['tripduration'] = $time;
 
+			    	echo "<input type=\"number\" name=\"customerid\" value=\"" . $_SESSION['cid'] . "\">";
+					echo "<input type=\"number\" name=\"basketid\" value=\"" . $_SESSION['basketid'] . "\">";
+					echo "<input type=\"number\" name=\"totalitemcost\" value=\"" . $_SESSION['totalitemcost'] . "\">";
+					echo "<input type=\"number\" name=\"costwithtax\" value=\"" . $_SESSION['costwithtax'] . "\">";
+					echo "<input type=\"number\" name=\"deliverycharge\" value=\"" . $_SESSION['deliverycharge'] . "\">";
+					echo "<input type=\"number\" name=\"tripduration\" value=\"" . $_SESSION['tripduration'] . "\">";
+					
 					if ($isCheck) {
 				    	echo "<div>Check Information<br>";
 				    	echo "Bank Account Number: <input type=\"number\" name=\"bankaccountnumber\">";
 				    	echo "Routing Number: <input type=\"number\" name=\"bankroutingnumber\">";
 				    	echo "</div>";
+				    } else {
+				    	//echo "<div>Check Information<br>";
+				    	echo "<input type=\"number\" name=\"bankaccountnumber\" style=\"display:none\">";
+				    	echo "<input type=\"number\" name=\"bankroutingnumber\" style=\"display:none\">";
+				    	//echo "</div>";
 				    }
+
+				    echo "<br><br>";
+					echo "<input type=\"submit\" value=\"Place Order\">";
 			    } else {
 			    	echo "Your address is not within our delivery area!<br>";
 			    }
@@ -153,7 +168,7 @@
 
 			mysqli_close($conn);
 		?>
-		<input type="text" name="customerid" value="<?php echo $_SESSION['cid'];?>">
+		<!--<input type="text" name="customerid" value="<?php echo $_SESSION['cid'];?>">
 		<input type="text" name="basketid" value="<?php echo $_SESSION['basketid'];?>">
 		<input type="text" name="totalitemcost" value="<?php echo $_SESSION['totalitemcost'];?>">
 		<input type="text" name="costwithtax" value="<?php echo $_SESSION['costwithtax'];?>">
@@ -162,7 +177,7 @@
 
 		<br>
 		<br>
-		<input type="submit" value="Place Order">
+		<input type="submit" value="Place Order"> -->
 		<br>
 		</fieldset>
 	</form>
