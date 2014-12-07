@@ -13,7 +13,7 @@
 		include 'loggedinheader.php';
 	?>
 
-	<form action="placeorder.html" method="post" align="left">
+	<form id="orderinformation" name= "orderinformation" action="placeorder.html" method="post" align="left">
 		<fieldset>
 		<legend>Order Information</legend>
 		<?php
@@ -38,6 +38,16 @@
 
 				return $distance;
 			}*/
+
+			function combo($thelist, $theinput) {
+			  $idx = $thelist.selectedIndex;
+			  $content = $thelist.options[idx].innerHTML;
+			}
+
+			function comboInit($thelist, $theinput) {
+			  $idx = $thelist.selectedIndex;
+			  $content = $thelist.options[idx].innerHTML;
+			}
 
 			$servername = "localhost";
 			$username = "jchen127";
@@ -156,6 +166,12 @@
 				    	echo "<input type=\"number\" name=\"bankroutingnumber\" style=\"display:none\">";
 				    	//echo "</div>";
 				    }
+
+				    echo "<br><br>";
+				    echo "Set Standing Order: ";
+				    echo "<select name=\"standingordertype\" form=\"orderinformation\" onChange=\"combo(this)\" onMouseOut=\"comboInit(this)\">";
+				    echo "<option>None</option><option>Daily</option><option>Weekly</option><option>Monthly</option>";
+				    echo "</select>";
 
 				    echo "<br><br>";
 					echo "<input type=\"submit\" value=\"Place Order\">";

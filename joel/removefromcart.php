@@ -13,12 +13,9 @@
 
 	$cid = $_GET['customerid'];
 	$productid = $_GET['productid'];
-	$numItems = $_GET[$productid . "list"];
-	echo "NUM ITEMS: " . $numItems . "<br>";
-	$_SESSION["cid"] = $_GET["customerid"];
-	$_SESSION["searchtext"] = "";
 
-	include 'loggedinheader.php';
+	$_SESSION["cid"] = $cid;
+	$_SESSION["searchtext"] = "";
 
 	$sql = "SELECT currentbasket FROM $database.customer c WHERE c.customerid = $cid";
 	$result = mysqli_query($conn, $sql);
@@ -35,14 +32,15 @@
 	    }
 
 	    //add basketitem
-	    $sqlAdd = "INSERT INTO $database.basketitem VALUES ($currBasketId, $productid, $numItems)";
+	    $sqlAdd = "DELETE FROM $database.basketitem WHERE basketid = $currBasketId AND productid = $productid";
 	    $resultAdd = mysqli_query($conn, $sqlAdd);
 
 	    if (!$result) {
-	    	echo "Insertion of basket item failed!!!<br>";
+	    	echo "Deletion of basket item failed!!!<br>";
 		} else {
-			echo "Insertion of basket item successful!<br>";
-			//header('Location: http://localhost/cmsc424website/viewcart.html?customerid=' . $cid);
+			echo "Deletion of basket item successful!<br>";
+			header('Location: viewcart.html?customerid=' . $cid);
+
 		}
 
 	} else {

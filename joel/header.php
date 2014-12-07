@@ -8,27 +8,7 @@
 		<form action="productsearch.html" method="get">
 			<input type="text" name="searchtext">
 		</form>
-<!--
-		<script src="jquery-2.1.1.js">
-			$( document ).ready(function() {
-	 
-			    $( "a" ).click(function( event ) {
-			 
-			        alert( "As you can see, the link no longer took you to jquery.com" );
-        			event.preventDefault();
-			 
-			    });
-	 
-			});
-		</script>
 
-
-		<a href="https://google.com/">View Orders</a>
-		<a href="https://google.com/">Transaction History</a>
-		<div class="header">
-		Logo, navigation, et cetera goes in here
-		</div>
--->
 		<hr>
 
 	<?php

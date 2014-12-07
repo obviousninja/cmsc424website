@@ -34,6 +34,8 @@
 			$tripduration = $_POST["tripduration"];
 			$bankaccountnumber = $_POST["bankaccountnumber"];
 			$bankroutingnumber = $_POST["bankroutingnumber"];
+			$standingordertype = $_POST["standingordertype"];
+			echo "Standing Order Type: " . $standingordertype . "<br>";
 
 			$totaltransactioncost = $costwithtax + $deliverycharge;
 
@@ -50,8 +52,19 @@
 			if (!$result) {
 				echo "Update of customer failed!<br>";
 			} else {
-			    // output data of each row
 			    echo "Customer update success!<br>";
+
+			    if ($standingordertype != "None") {
+			    	echo "IsStandingOrder is true<br>";
+			    	$sqlStanding = "UPDATE $database.basket SET isstandingorder = 1, standingordertype = '$standingordertype' WHERE basketid = $bid";
+			    	$resultStanding = mysqli_query($conn, $sqlStanding);
+
+			    	if (!$resultStanding) {
+			    		echo "Update of basket to standing order failed!<br>";
+			    	} else {
+			    		echo "Successfully set basket to standing order!<br>";
+			    	}
+			    }
 
 			    $sqlTrans = "INSERT INTO $database.transaction VALUES (NULL, $bid, $cid, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
 			    $resultTrans = mysqli_query($conn, $sqlTrans);
@@ -82,7 +95,7 @@
 					    	echo mysql_info() . "<br>";
 
 					    	/* Update customer balance and set new current basket */
-					    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, 0, '$date')"; 
+					    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, NULL, 0, '$date')"; 
 					    	$resultBasket = mysqli_query($conn, $sqlBasket);
 
 					    	if (!$resultBasket) {

@@ -86,11 +86,11 @@
 		            var removeButton = document.createElement("form");
 					removeButton.setAttribute("id", item["productid"] + "form");
 					removeButton.setAttribute("name", item["productid"] + "form");
-					//removeButton.setAttribute("action", "removefromcart.php");
+					removeButton.setAttribute("action", "removefromcart.php");
 					removeButton.setAttribute("method", "get");
 					listElement.appendChild(removeButton);
 
-					removeButton.innerHTML = "<input type=\"text\" name=\"customerid\" value='<?php echo $_GET['customerid'] ?>'/><input type=\"text\" name=\"productid\" value='" + item["productid"] + "'/><input type=\"submit\" value=\"Remove\"/>";
+					removeButton.innerHTML = "<input type=\"text\" name=\"customerid\" value='<?php echo $_GET['customerid'] ?>'><input type=\"text\" name=\"productid\" value='" + item["productid"] + "'><input type=\"submit\" value=\"Remove\"/>";
 
 		            /*listElement.innerHTML += "<a id=\"" + "remove" + item["name"] + "\" onclick=\"<?php include 'addtocart.php' ?>\" href=\"#\">Remove</a>";*/
 				}

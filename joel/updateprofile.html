@@ -8,7 +8,7 @@
 		$cid = $_GET["customerid"];
 		echo "Get CID: " . $cid . "<br>";
 		$_SESSION["cid"] = $_GET["customerid"];
-		$_SESSION["searchtext"] = $_GET["searchtext"];
+		$_SESSION["searchtext"] = "";
 
 		include 'loggedinheader.php';
 
@@ -61,6 +61,8 @@
 		    $nameArr = explode(", ", $name, 2);
 		    $addressArr = explode(", ", $address);
 		    $stateZip = explode(" ", $addressArr[2]);
+
+		    echo "Balance: $" . money_format('%i', $balance) . "<br><br>";
 
 		    echo "<form action=\"updateprofile.php\" method=\"post\" align=\"left\">";
 		    echo "<fieldset>";
