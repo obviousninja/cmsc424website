@@ -8,11 +8,14 @@
 	<br><br>
 	<!--<a href="loggedinhome.html?customerid=<?php echo $_SESSION['cid'] ?>">HOME</a>-->
 	<div align="left">
-		<a href="loginproductsearch.html">Search Products</a>
 		<form action="loginproductsearch.html" method="get">
 			<input type="text" name="searchtext" value='<?php echo $_SESSION['searchtext']; ?>'>
 			<input type="text" name="customerid" value='<?php echo $_SESSION['cid'] ?>' style="display:none"/>
-			<input type="submit" value="Search"/>
+			<input type='number' name='minprice' style='display:none'>   
+			<input type='number' name='maxprice' style='display:none'>   
+			<input type='hidden' name='saleonly' value='0' style='display:none'>
+			<input type='checkbox' name='saleonly' value='1' style='display:none'>
+			<input type="submit" value="Search Products"/>
 		</form>
 
 	</div>

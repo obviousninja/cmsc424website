@@ -109,15 +109,26 @@
 					    		if ($resultBalance) {
 					    			echo "Balance update successful!<br>";
 
-					    			/* update product count??!!!!!!!!!!!!!!!! 
-					    			$sqlProduct = "UPDATE $database.product SET soldcount = soldcount + ?? WHERE productid in (SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid)";
+					    			/* update product count */
+					    			$sqlProduct = "SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid";
 					    			$resultProduct = mysqli_query($conn, $sqlProduct);
 
 					    			if ($resultProduct && mysqli_num_rows($resultProduct) > 0) {
+					    				while ($row = mysqli_fetch_assoc($resultProduct)) {
+					    					$sqlUpdateCount = "UPDATE $database.product SET soldcount = soldcount + " . $row['productquantity'] . " WHERE productid = " . $row['productid'];
+					    					$resultUpdateCount = mysqli_query($conn, $sqlUpdateCount);
 
+					    					if ($resultUpdateCount) {
+					    						echo "Product " . $row['productid'] . " update successful!<br>";
+					    					} else {
+					    						echo "Product " . $row['productid'] . " update FAILED!<br>";
+					    					}
+					    				}
+
+					    				
 					    			} else {
-					    				echo "No products updated<br>";
-					    			}*/
+					    				echo "No products found to update?!<br>";
+					    			}
 
 					    		} else {
 					    			echo "Balance and currentbasket update failed!<br>";

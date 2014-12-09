@@ -18,14 +18,36 @@
 					}
 
 					$searchText = $_GET["searchtext"];
+					$minprice = $_GET["minprice"];
+					$maxprice = $_GET["maxprice"];
+					$saleonly = $_GET["saleonly"];
+					$sql = "";
+					$lowerSearchText = strtolower($searchText);
+
 					if (!$searchText) {
-						echo "No search text!<br>";
-						exit();
+						//echo "No search text!<br>";
+						//exit();
+					} else {
+
 					}
 
-					$lowerSearchText = strtolower($searchText);
-					$sql = "SELECT * FROM $database.product p, $database.productcategory c WHERE p.categoryid = c.categoryid 
-								AND (LOWER(p.productname) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
+					if (!$minprice) {
+						$minprice = 0;
+					}
+					if (!$maxprice) {
+						$maxprice = PHP_INT_MAX;
+					}
+					if ($saleonly) {
+						$sql = "SELECT * FROM $database.product p, $database.productcategory c WHERE p.categoryid = c.categoryid 
+							AND (p.price >= $minprice) AND (p.price <= $maxprice) AND (p.isonsale = 1)
+							AND (LOWER(p.productname) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
+					} else {
+						$sql = "SELECT * FROM $database.product p, $database.productcategory c WHERE p.categoryid = c.categoryid 
+							AND (p.price >= $minprice) AND (p.price <= $maxprice)
+							AND (LOWER(p.productname) LIKE '%$lowerSearchText%' OR LOWER(c.category) LIKE '%$lowerSearchText%' OR LOWER(c.subcategory) LIKE '%$lowerSearchText%')";
+					}
+					
+					
 					$result = mysqli_query($conn, $sql);
 
 					$returnStr = "[";
@@ -39,10 +61,10 @@
 					    		$saleprice = "null";
 					    	}
 
-					        $returnStr = $returnStr . "{" . "\"name\": " . "\"" . $row["productname"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . ",\n\"imageurl\":" . "\"" . $row["imageurl"] . "\"" . "}, \n";
+					        $returnStr = $returnStr . "{" . "\"id\": " . $row["productid"] . ",\n\"name\": " . "\"" . $row["productname"] . "\"" . ",\n\"price\":" . $row["price"] . ",\n\"category\":" . "\"" . $row["category"] . "\"" . ",\n\"subcategory\":" . "\"" . $row["subcategory"] . "\"" . ",\n\"isonsale\":" . $row["isonsale"] . ",\n\"saleprice\":" . $saleprice . ",\n\"imageurl\":" . "\"" . $row["imageurl"] . "\"" . "}, \n";
 					    }
 					} else {
-					    echo "0 results for products";
+					    //echo "0 results for products";
 					}
 
 					mysqli_close($conn);
@@ -101,9 +123,20 @@
 
 	<body>
 
-		<?php include 'header.php'; ?>
+		<?php 
+			$_SESSION["searchtext"] = $_GET["searchtext"];
 
-		<p>You can do some product searching here!</p>
+			include 'header.php'; 
+		?>
+
+		<form action='productsearch.html' id='productsearchform'>
+			Search Term: <input type='text' name='searchtext'><br> 
+			Minimum price: <input type='number' name='minprice'>   
+			Maximum price: <input type='number' name='maxprice'>   
+			<input type='hidden' name='saleonly' value='0'>
+			<input type='checkbox' name='saleonly' value='1'> Sale Items Only<br>
+			<input type='submit' value='Search Products'><hr><br><br>
+		</form>
 
 		<script type="text/javascript">
 			showSearchResults();
