@@ -130,7 +130,7 @@
 	                listItem.setAttribute("value", property);
 
 
-	                listItem.innerHTML = "<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onmouseout=\"document.getElementById('" + property + "').style.display='none';\" href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + property + "\" id=\"showsubcategory\" >" + property + "</a>";
+	                listItem.innerHTML = "<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onmouseout=\"document.getElementById('" + property + "').style.display='none';\" href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + property + "&minprice=&maxprice=&saleonly=0\" id=\"showsubcategory\" >" + property + "</a>";
 /*	                console.log("Property: " + property);
 	                console.log("<a onmouseover=\"onMouseOverCategory(document.getElementById('" + property + "main').value);\" href=\"productsearch.html?searchtext=" + property + "\" id=\"showsubcategory\" >" + property + "</a>");
 
@@ -159,7 +159,7 @@
 	                	var arr = categoryArr[property];
 	                	var subListItem = document.createElement("li");
 
-		                subListItem.innerHTML = "<a href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + arr[i] + "\" id=\"showsubsubcategory\">" + arr[i] + "</a>";
+		                subListItem.innerHTML = "<a href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + arr[i] + "&minprice=&maxprice=&saleonly=0\" id=\"showsubsubcategory\">" + arr[i] + "</a>";
 
 		                subcategoryListElement.appendChild(subListItem);
 	                }

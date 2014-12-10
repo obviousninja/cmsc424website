@@ -87,11 +87,13 @@
 
 		            listContainer.appendChild(listElement);
 
-		            for (var property in item) {
+		            /*for (var property in item) {
 					    if (item.hasOwnProperty(property)) {
 			                var listItem = document.createElement("p");
 
-			                if (property === "name") {
+			                if (property === "productid") {
+			                	listItem.innerHTML = "Barcode: " . item[property];
+			                } else if (property === "name") {
 			                	listItem.innerHTML = item[property];
 			                } else if (property === "price") {
 			                	listItem.innerHTML = "$" + item[property].toFixed(2);
@@ -105,12 +107,17 @@
 			                listElement.appendChild(listItem);
 		            	}
 
-		            }
+		            }*/
 
-		            //ONLY FOR LOGGED IN CUSTOMERS
-		            /*listElement.innerHTML += "Quantity: <select name=\"thelist\"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> ";
-		            listElement.innerHTML += "<a id=\"" + "add" + item["name"] + "\" href=\"#\">Add To Cart</a>";
-		            */
+		            listElement.innerHTML += "Barcode: " + item["id"] + "<br>";
+			        listElement.innerHTML += "<p>" + item["name"] + "</p><br>";
+		            if (item["isonsale"] == 1) {
+		            	listElement.innerHTML += "<p>$" + item["saleprice"].toFixed(2) + "</p>";
+		            	listElement.innerHTML += "<img src='https://www.bubbablueonline.com.au/wp-content/uploads/sale.png' alt='ON SALE' style='width:100px;height:100px'><br>";
+		            } else {
+		            	listElement.innerHTML += "<p>$" + item["price"].toFixed(2) + "</p><br>";
+		            }
+		            listElement.innerHTML += "<p><img src='" + item["imageurl"] + "'></p>";
 				}
 	            
 

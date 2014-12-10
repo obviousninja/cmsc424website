@@ -20,9 +20,9 @@
 
 	</div>
 	<div align="right">
-		<a href="viewcart.html?customerid=<?php echo $_SESSION['cid'] ?>">View Cart</a>
+		<a href="viewcart.html?customerid=<?php echo $_SESSION['cid'] ?>&basketid=">View Cart</a>
 		<a href="vieworders.html?customerid=<?php echo $_SESSION['cid'] ?>">View Orders</a>
-		<a href="https://google.com/">Transaction History</a>
+		<a href="transactionhistory.html?customerid=<?php echo $_SESSION['cid'] ?>&startdate=&enddate=">Transaction History</a>
 		<a href="updateprofile.html?customerid=<?php echo $_SESSION['cid'] ?>">Update Profile</a>
 		<a href="index.html">Logout</a>
 	</div>

@@ -18,8 +18,16 @@
 				}
 
 				$cid = $_GET["customerid"];
+				$basketid = $_GET["basketid"];
+				$sql = "";
 
-				$sql = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p, $database.customer c WHERE c.customerid = $cid AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
+				if ($basketid) {
+					$sql = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p, $database.customer c WHERE b.basketid = $basketid AND c.customerid = $cid AND b.basketid = bi.basketid AND bi.productid = p.productid";
+				} else {
+					$sql = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p, $database.customer c WHERE c.customerid = $cid AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
+				}
+
+				
 				$result = mysqli_query($conn, $sql);
 
 				$returnStr = "[";
@@ -90,7 +98,7 @@
 					removeButton.setAttribute("method", "get");
 					listElement.appendChild(removeButton);
 
-					removeButton.innerHTML = "<input type=\"text\" name=\"customerid\" value='<?php echo $_GET['customerid'] ?>'><input type=\"text\" name=\"productid\" value='" + item["productid"] + "'><input type=\"submit\" value=\"Remove\"/>";
+					removeButton.innerHTML = "<input type=\"text\" name=\"customerid\" value='<?php echo $_GET['customerid'] ?>' style=\"display:none\"><input type=\"text\" name=\"productid\" value='" + item["productid"] + "' style=\"display:none\"><input type=\"submit\" value=\"Remove\"/>";
 
 		            /*listElement.innerHTML += "<a id=\"" + "remove" + item["name"] + "\" onclick=\"<?php include 'addtocart.php' ?>\" href=\"#\">Remove</a>";*/
 				}

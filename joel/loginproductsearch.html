@@ -86,7 +86,7 @@
 
 		            listContainer.appendChild(listElement);
 
-		            for (var property in item) {
+		            /*for (var property in item) {
 					    if (item.hasOwnProperty(property)) {
 			                var listItem = document.createElement("p");
 
@@ -104,7 +104,17 @@
 			                listElement.appendChild(listItem);
 		            	}
 
+		            }*/
+
+		            listElement.innerHTML += "Barcode: " + item["id"] + "<br>";
+			        listElement.innerHTML += "<p>" + item["name"] + "</p><br>";
+		            if (item["isonsale"] == 1) {
+		            	listElement.innerHTML += "<p>$" + item["saleprice"].toFixed(2) + "</p>";
+		            	listElement.innerHTML += "<img src='https://www.bubbablueonline.com.au/wp-content/uploads/sale.png' alt='ON SALE' style='width:100px;height:100px'><br>";
+		            } else {
+		            	listElement.innerHTML += "<p>$" + item["price"].toFixed(2) + "</p><br>";
 		            }
+		            listElement.innerHTML += "<p><img src='" + item["imageurl"] + "'></p>";
 
 		            //ONLY FOR LOGGED IN CUSTOMERS
 		            listElement.innerHTML += "Quantity: ";
@@ -187,6 +197,7 @@
 			<input type='hidden' name='saleonly' value='0'>
 			<input type='checkbox' name='saleonly' value='1'> Sale Items Only<br>
 			<input type='submit' value='Search Products'><hr><br><br>
+			<input type='number' name='customerid' value='<?php echo $_SESSION["cid"]?>' style='display:none'>
 		</form>
 
 		<script type="text/javascript">
