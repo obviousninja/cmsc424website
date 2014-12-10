@@ -103,6 +103,7 @@
             for (var property in categoryArr) {
 			    if (categoryArr.hasOwnProperty(property)) {
 			        // do stuff
+			        console.log(property);
 			        console.log(categoryArr[property]);
 			        /* (var i = 0; i < categoryArr.length; i++) {
 		            	console.log(categoryArr[i]);
@@ -131,7 +132,10 @@
 	                listItem.setAttribute("value", property);
 
 
-	                listItem.innerHTML = "<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onmouseout=\"document.getElementById('" + property + "').style.display='none';\" href=\"productsearch.html?searchtext=" + property + "\" id=\"showsubcategory\" >" + property + "</a>";
+	                listItem.innerHTML = "<a onclick=\"document.getElementById('" + property + "').style.display='';\" ondblclick=\"searchMainHeader('" + property + "');\" id=\"showsubcategory\" >" + property + "</a>";
+
+
+	                /*onmouseout=\"document.getElementById('" + property + "').style.display='none';\"*/
 /*	                console.log("Property: " + property);
 	                console.log("<a onmouseover=\"onMouseOverCategory(document.getElementById('" + property + "main').value);\" href=\"productsearch.html?searchtext=" + property + "\" id=\"showsubcategory\" >" + property + "</a>");
 
@@ -160,7 +164,7 @@
 	                	var arr = categoryArr[property];
 	                	var subListItem = document.createElement("li");
 
-		                subListItem.innerHTML = "<a href=\"productsearch.html?searchtext=" + arr[i] + "\" id=\"showsubsubcategory\">" + arr[i] + "</a>";
+		                subListItem.innerHTML = "<a href=\"productsearch.html?searchtext=" + arr[i] + "&minprice=&maxprice=&saleonly=0\" id=\"showsubsubcategory\">" + arr[i] + "</a>";
 
 		                subcategoryListElement.appendChild(subListItem);
 	                }
@@ -177,6 +181,10 @@
             document.getElementsByTagName("body")[0].appendChild(listContainer);
         }
 
+
+        function searchMainHeader(property) {
+        	window.open("productsearch.html?searchtext=" + property + "&minprice=&maxprice=&saleonly=0", "_self");
+        }
 
         function showSubCategory() {
 	       	$('#showsubcategory').click(function() {

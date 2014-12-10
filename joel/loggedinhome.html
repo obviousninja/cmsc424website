@@ -130,7 +130,9 @@
 	                listItem.setAttribute("value", property);
 
 
-	                listItem.innerHTML = "<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onmouseout=\"document.getElementById('" + property + "').style.display='none';\" href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + property + "&minprice=&maxprice=&saleonly=0\" id=\"showsubcategory\" >" + property + "</a>";
+	                listItem.innerHTML = "<a onclick=\"document.getElementById('" + property + "').style.display='';\" ondblclick=\"searchMainHeader('" + property + "');\" id=\"showsubcategory\" >" + property + "</a>";
+
+	                //listItem.innerHTML = "<a onmouseover=\"document.getElementById('" + property + "').style.display='';\" onmouseout=\"document.getElementById('" + property + "').style.display='none';\" href=\"loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + property + "&minprice=&maxprice=&saleonly=0\" id=\"showsubcategory\" >" + property + "</a>";
 /*	                console.log("Property: " + property);
 	                console.log("<a onmouseover=\"onMouseOverCategory(document.getElementById('" + property + "main').value);\" href=\"productsearch.html?searchtext=" + property + "\" id=\"showsubcategory\" >" + property + "</a>");
 
@@ -176,6 +178,11 @@
             document.getElementsByTagName("body")[0].appendChild(listContainer);
         }
 
+        function searchMainHeader(property) {
+        	//window.open("productsearch.html?searchtext=" + property + "&minprice=&maxprice=&saleonly=0", "_self");
+        	window.open("loginproductsearch.html?customerid=" + "<?php echo $_GET['customerid']?>" + "&searchtext=" + property + "&minprice=&maxprice=&saleonly=0", "_self");
+        }
+        
 
         function showSubCategory() {
 	       	$('#showsubcategory').click(function() {
