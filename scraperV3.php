@@ -1,4 +1,5 @@
 <?php
+ require_once "Mail.php";
  
     function createDatabase(){
         $servername = "localhost";
@@ -63,6 +64,8 @@
          password varchar(80),
          balance float,
          paymentflag boolean,
+         paymentmade datetime,
+         state varchar(10),
          creditcardnumber varchar(10),
          ccexpiration datetime,
          bankaccountnumber varchar(20),
@@ -78,8 +81,9 @@
         $createBasket = "create table basket(
             basketid INT(10) UNSIGNED AUTO_INCREMENT,
             customerid INT(10) UNSIGNED,
-            isstandingorder BOOLEAN,
-            haltstandingorder BOOLEAN,
+            isstandingorder BOOLEAN default false,
+            haltstandingorder BOOLEAN default false,
+            standingordertype varchar(10),
             basketdate DATETIME,
             PRIMARY KEY (basketid),
             FOREIGN KEY (customerid) references customer(customerid)
@@ -499,6 +503,7 @@
         //main
         createDatabase();
         createTables();
+        generateTest();
         //populate database
         scrapeMasterMarkK();
         
@@ -641,10 +646,10 @@
                 
                 
                 //stop pre-emptively for my case because i want it to stop and not going forever
-                $iterNow +=1;
+                /*$iterNow +=1;
                 if($iterStop == $iterNow){
                     break;
-                }
+                }*/
                 
             }
            
@@ -674,23 +679,443 @@
         
     }
     //generates average basket value report, take a param base on how many days. so for example 1 day or 200 days. upper range is not restricted
-    
-    function averageBasketValueReport($mDay){
-        echo "i got here like a champ";
-        //TODO calculate currentdate-mday
+    function generateTest(){
+        //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        $sqlArray = array();
+        //insert 3 customers
+        $sqlcommand = "insert into customer (name, password, email) values ('jing', 'allies', 'infinityarc@gmail.com')";
+         array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into customer (name, password, email) values ('sam', 'wintchester', 'samwinchester@gmail.com')";
+         array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into customer (name, password, email) values ('dean', 'winchester', 'deanwinchester@gmail.com')";
+         array_push($sqlArray, $sqlcommand);
+        /*if ($conn->query($insCustomer1) === TRUE && $conn->query($insCustomer2) === true &&  $conn->query($insCustomer3)) {
+             echo "Table Customer1 Customer2 Customer3 created successfully";
+        } else {
+            echo "Error creating table: " . $conn->error;
+        } */  
+        //insert 3 baskets
         
+        $sqlcommand = "insert into basket (customerid, basketdate) values ('1', '2012-11-11 00:20:21')";
+         array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basket (customerid, basketdate) values ('1', '2010-11-30 00:10:31')";
+         array_push($sqlArray, $sqlcommand);
+        
+        $curTime = date("Y-m-d H:i:s");
+        $sqlcommand = "insert into basket (customerid, basketdate) values ('2', '$curTime')";
+         array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basket (customerid, basketdate) values ('3', '2012-02-12')";
+         array_push($sqlArray, $sqlcommand);
+        
+        
+        
+        /*if($conn->query($ins4)){
+            echo "basket table created successfully";
+        }else{
+            echo "error creating table: " . $conn->error;
+        }*/
+          
+        //inserting basketitems
+        //first item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '1', '1')";
+        array_push($sqlArray, $sqlcommand);
+        //second item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '2', '1')";
+        array_push($sqlArray, $sqlcommand);
+        //third item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '3', '1')";
+        array_push($sqlArray, $sqlcommand);
+        
+        //first item of second basket
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '2', '1')";
+        array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '3', '1')";
+        array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '4', '1')";
+        array_push($sqlArray, $sqlcommand);
+
+        
+        
+        
+      
+        //looping through the array of sqlcommands
+        for($x=0; $x < count($sqlArray); $x++){
+            if($conn->query($sqlArray[$x])){
+                echo "item $x inserted successfully";
+            }else{
+                echo "item $x inserted failed" . $conn->error;
+            }
+        }
+        
+        $conn->close();
+    }
+    function generateBasketItem(){
+        //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        $sqlArray = array();
+        //inserting basketitems
+        //first item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '1', '1')";
+        array_push($sqlArray, $sqlcommand);
+        //second item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '2', '1')";
+        array_push($sqlArray, $sqlcommand);
+        //third item
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '3', '1')";
+        array_push($sqlArray, $sqlcommand);
+        
+        //first item of second basket
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '2', '1')";
+        array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '3', '1')";
+        array_push($sqlArray, $sqlcommand);
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '4', '1')";
+        array_push($sqlArray, $sqlcommand);
+
+        
+        
+        
+      
+        //looping through the array of sqlcommands
+        for($x=0; $x < count($sqlArray); $x++){
+            if($conn->query($sqlArray[$x])){
+                echo "item $x inserted successfully";
+            }else{
+                echo "item $x inserted failed" . $conn->error;
+            }
+        }
+        $conn->close();
+    }
+    
+    //grab all the basket within the start and the end date and display their average over the days
+    function averageBasketValueReport($mDay, $mHour){
+        //pre-work, generate baskets assigning default timezone
+          date_default_timezone_set('America/New_York');
+           //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+          //generateTestBaskets();
+        /* example of date interval 
+        P = YMD
+            Y = Year
+            M = Month
+            D = Day
+        T = HIS
+            H = hour
+            I = minute
+            S = second
+            
+        number infront of suffix
+        P and T must be before the specific time closure
+$date = new DateTime('2000-01-20');
+$date->sub(new DateInterval('PT10H30S'));
+echo $date->format('Y-m-d H:i:s') . "\n";
+
+$date = new DateTime('2000-01-20');
+$date->sub(new DateInterval('P7Y5M4DT4H3M2S'));
+echo $date->format('Y-m-d H:i:s') . "\n";
+
+         */
+          
+        //TODO calculate currentdate-mday
+      //date("Y-m-d H:i:s")   //current date and time, mysql insertable
+        echo "Current DateTime " . date("Y-m-d H:i:s") . "<br>";
+        $startDate = date("Y-m-d H:i:s");
+        $newdate = new DateTime($startDate);  //as end date
+        
+        $subtractString = "P" . $mDay . "D" . "T" . $mHour . "H";  //formating the substraction
+        //echo $subtractString;
+        
+        $resultDate = $newdate->sub(new DateInterval($subtractString));
+        echo "Lower End DateTime: " . $resultDate->format("Y-m-d H:i:s") . "<br>"; //as start date
+        
+    
+        
+       /* if(is_string($startDate) === true){
+            echo "this is a string";
+        }*/
+        //formating date and time into strings
+        $endDateString = $startDate;  //datetime when admin pressed the report button
+        $beginDateString = $resultDate->format("Y-m-d H:i:s");  //datetime that goes back to the lower bound
+        
+        //"SELECT categoryid, category, subcategory FROM productcategory where category='$grandkey' and subcategory='$subkey'";
         //TODO retrieve the basketid that has lesser than current day, but greater than currentdate-mDay
         
-        //TODO get the total number of basketids for average calculation
-        
-        //TODO get the basketItems of each basketid and get total associated with each basketid
-        
+        $sqlcommand = "select distinct basketid, basketdate from basket where basketdate < '$endDateString' and basketdate > '$beginDateString'";
+
+        //selects baskets within date
+        $result = $conn->query($sqlcommand);
+
         //
+        $totalSum = 0;  //total price currently accumulated
+        $totalRow = 0;
+   if ($result->num_rows > 0) {
+     // output data of each row
+     while($row = $result->fetch_assoc()) {
+         echo "<br> BasketId: ". $row["basketid"]. " Basket Date: ". $row["basketdate"]. "<br>";
+         
+         //find the basketitems that has the associated basketid and return their price and quantity
+         $bid = $row["basketid"];
+         $sqlcommand = "select productid, productquantity from basketitem where basketid = '$bid'";
+         //select basketitems that has items and quanity
+         $basketItemResult = $conn->query($sqlcommand);
+         if($basketItemResult->num_rows > 0){
+            //store things table $brow
+            
+            while($brow = $basketItemResult->fetch_assoc()){
+              //  echo "<br> productid: " . $brow["productid"] . "- productquanitty: " . $brow["productquantity"]."<br>";
+                //store productid
+                $pid = $brow["productid"];
+                $curQuan = $brow["productquantity"];
+                //use the productid here to retrieve the product price then multiply the price by product quantity
+                $sqlcommand = "select productid, productname, price from product where productid = '$pid'";
+                
+                
+                $priceResult = $conn->query($sqlcommand);
+                if($priceResult->num_rows > 0){
+                    while($prow= $priceResult->fetch_assoc()){
+                        echo "<br>-------- PID: " . $prow["productid"] . " Product Name: " . $prow["productname"] . " Price: " . $prow["price"]. " Product Quantity: " . $brow["productquantity"]."<br>";
+                        //getting price
+                        $pricy = floatval($prow["price"]);
+                        //totalproduct multiply by quanity
+                        $mul = $pricy*$curQuan;
+                        //added it to total sum
+                        $totalSum = $totalSum + $mul;
+                    }
+                }
+                
+                
+            }
+          
+         }
+         
+         $totalRow++; //count the baskets so far
+      }
+     }else{
+        echo "<br> No Result Found!";
+     }
+     if($totalRow == 0){ //correction
+      $finalResult = 0;
+     }else{
+     $finalResult = $totalSum/$totalRow;}
+     echo "<br>Total Basket: $totalRow<br> Total Sum: $totalSum <br>Average Basket Value: " . $finalResult . "<br>";
+       
+        $conn->close();
+    }
+    //just return the customer table i guess.
+    function customerReport(){
+             //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        $sqlCommand = "select customerid, name, age, sex, balance, paymentflag, address, phonenumber, email, status from customer";
+        
+        echo "Customer Report<br>";
+        $customerResults = $conn->query($sqlCommand);
+        if($customerResults->num_rows > 0){
+             while($row= $customerResults->fetch_assoc()){
+                echo "<br> Customer Id: " . $row['customerid'];
+                echo " Customer Name: " . $row["name"] . " Age: " . $row["age"] . " Sex: " . $row["sex"] . " balance: " . $row["balance"];
+                echo " address: " . $row["address"] . " phonenumber: " . $row["phonenumber"] . " email: " . $row["email"] . " status: " . $row["status"] . "<br>";
+                
+             }
+        }else{
+            echo "No Customer Exists";
+        }
+        
+        $conn->close();
+    }
+   // estabConnect();  //this is the correct code. REENABLE for database repopulation
+    
+    //mark delinquent customer if they didn't make payment in 30 days
+    function markCustomer(){
+         date_default_timezone_set('America/New_York');
+        $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        //get the customer that has no null value as the payment made, if a customer has null as paymentmade
+        //then he is new and there is no way he will be owing anyway.
+        $sqlCommand = "select customerid, name, paymentmade, balance from customer";
+        
+        $result = $conn->query($sqlCommand);
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+               // echo "<br>customerid: " . $row['customerid'] . " name: "  . $row['name'] . " paymentmade: " . $row['paymentmade'];
+              //  echo " balance: " . $row['balance'];
+               // echo "<br>Current DateTime " . date("Y-m-d H:i:s") . "<br>";
+                $startDate = new DateTime(date("Y-m-d H:i:s")); //current date and time
+                $givenDate = new DateTime($row['paymentmade']); //date and time that they have
+                
+                $storeDate = $startDate->diff($givenDate);
+                $diffdate = $storeDate->format('%a');
+                $curBalance = floatval($row['balance']); //need
+                $cid = $row['customerid'];
+                //$didate = $startDate->diff($givenDate);
+                //$didate = $didate->format("Y-m-d H:i:s");
+               // print_r($storeDate);
+                //$storeDate->format('%R%a');
+                //$storeDate->format("d");
+                //echo "<br>" . $diffdate . "<br>";
+                //echo "<br>$startDate<br>";
+                //if the last payment is greater than 30, we mark this person as delinq
+                if(intval($diffdate) > 60 &&  $curBalance > 0){
+                    //delinquent
+                   // echo " Delinquent name: "  . $row['name'];
+                    $sqlCommand = "update customer set status='delinq' where customerid='$cid'";
+                    
+                    
+                }else if(intval($diffdate) > 30 && intval($diffdate) <= 60 &&  $curBalance > 0){
+                    //late
+                   // echo "late";
+                     $sqlCommand = "update customer set status='late' where customerid='$cid'";
+                    
+                }else{
+                    //ontime
+                    $sqlCommand = "update customer set status='ontime' where customerid='$cid'";
+                    
+                }
+                //execute the command
+                if ($conn->query($sqlCommand) !== TRUE) {
+             
+            echo "Error updating record: " . $conn->error;
+         }
+                
+                
+            }
+        }
+        
+        $conn->close();
         
     }
-    //estabConnect();  //this is the correct code. REENABLE for database repopulation
-    
-    //creating product category
-    
+    //output the delinquent customer and email them
+    function delinqReport(){
+          $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
         
+        $sqlCommand = "select customerid, name, email, status from customer where status = 'delinq'";
+        echo "<br>Delinquent Customer Report<br>";
+        $delinqResult = $conn->query($sqlCommand);
+        if($delinqResult->num_rows > 0){
+            while($row = $delinqResult->fetch_assoc()){
+                echo "<br> Customer Id: " . $row['customerid'];
+                echo " Customer Name: " . $row["name"];
+                echo " email: " . $row["email"] . " status: " . $row["status"] . "<br>";
+                
+                
+                $cname = $row['name'];
+                $mailadd = $row["email"];
+                
+                //send email to the customer
+            $from = 'smallfry9000@yahoo.com';
+            $to = $mailadd;
+            $subject = "Pay Up $cname , You are a bad customer";
+            $body = "Hi,\n\nYou are delinquent on payment! what payment you ask?! the \"Payment\". I am sending my homies after you, you will be REKTed. REKTed i tell ya!";
+
+            $headers = array(
+             'From' => $from,
+            'To' => $to,
+         'Subject' => $subject
+            );
+
+        $smtp = Mail::factory('smtp', array(
+        'host' => 'ssl://smtp.mail.yahoo.com',
+        'port' => '465',
+        'auth' => true,
+        'username' => 'smallfry9000@yahoo.com',
+        'password' => 'insaneAsylum1'
+    ));
+
+        $mail = $smtp->send($to, $headers, $body);
+
+        if (PEAR::isError($mail)) {
+      echo('<p>' . $mail->getMessage() . '</p>');
+        } else {
+      echo('<p>Message successfully sent!</p>');
+        }
+                
+                //end of sending mail
+                
+            }
+        }
+        
+        $conn->close();
+    }
+    
+    //suggest things base all their basketitems
+    function suggestProduct($customerid){
+            $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        //get all the stuff associated with the customerid
+        $sql = "select basketid, customerid from basket where customerid = '$customerid'";
+           
+        $result = $conn->query($sql);
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+                echo "<br>basketid: " . $row['basketid'] . " customerid " . $row['customerid'];
+                
+                //now get basketitems
+                $
+                $sql = "select from basketitems where basketid = "
+                
+            }
+        }
+        
+        
+        $conn->close();
+    }
+    
+    
 ?>

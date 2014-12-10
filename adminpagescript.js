@@ -3,10 +3,10 @@ $(document).ready(function(){
   //below are reports, they are unordered list not orderedlist, i made a last min change of mind
    var legend = "<legend>Administrator Reports</legend>";
   var BWSIR = "<br><li><a href='bwreport.php' target='ActionFrame'>best or worst selling item</a></li><br>";
-  var ABVR = "<li><a href='http://www.google.com' target='ActionFrame'>average basket value report <b>X</b></a></li><br>";
-  var CR = "<li><a href='http://www.google.com' target='ActionFrame'>customer report <b>X</b></a></li><br>";
-  var DR = "<li><a href='http://www.google.com' target='ActionFrame'>delinquency report <b>X</b></a></li><br>";
-  var SPR = "<li><a href='http://www.google.com' target='ActionFrame'>suggested product report <b>X</b></a></li><br>";
+  var ABVR = "<li><a href='averageBasketValueReport.php' target='ActionFrame'>average basket value report</a></li><br>";
+  var CR = "<li><a href='customerreport.php' target='ActionFrame'>customer report </a></li><br>";
+  var DR = "<li><a href='delinquentreport.php' target='ActionFrame'>delinquency report </a></li><br>";
+  var SPR = "<li><a href='suggestProductReport.php' target='ActionFrame'>suggested product report</a></li><br>";
   var VOR = "<li><a href='http://www.google.com' target='ActionFrame'>view order report <b>X</b></a></li><br>";
   var PSR = "<li><a href='http://www.google.com' target='ActionFrame'>product search report <b>X</b></a></li><br>";
   var BR = "<li><a href='http://www.google.com' target='ActionFrame'>balance report <b>X</b></a></li><br>";
