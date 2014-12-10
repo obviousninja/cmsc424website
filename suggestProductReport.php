@@ -1,6 +1,6 @@
 <?php
   require_once('scraperV3.php');
-//generateBasketItem();
+   // generateBasketItem();
  echo "
    <form method = 'post' action='suggestProductReport.php'>
    customerid: <input type='text' name='customerid'>
@@ -19,7 +19,14 @@
     if(intval($idStore) == 0 ){
         echo "<br> Enter a valid customerid";
     }else{
-        suggestProduct(intval($idStore));
+       $paser =  suggestProduct(intval($idStore));
+       if($paser == -1){
+        echo "No product recommandation because you have never made a purchase";
+       }else{
+        toStringProduct(intval($paser));
+       }
+        
+        
     }
    }
 

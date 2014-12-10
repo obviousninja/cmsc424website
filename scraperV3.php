@@ -772,7 +772,7 @@
         $sqlArray = array();
         //inserting basketitems
         //first item
-        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '1', '1')";
+       /* $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '1', '1')";
         array_push($sqlArray, $sqlcommand);
         //second item
         $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('1', '2', '1')";
@@ -788,9 +788,16 @@
         array_push($sqlArray, $sqlcommand);
         $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '4', '1')";
         array_push($sqlArray, $sqlcommand);
-
+       
+       
+$sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '5', '4')";
+        array_push($sqlArray, $sqlcommand);
         
-        
+        $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '11', '7')";
+        array_push($sqlArray, $sqlcommand);*/
+       
+       $sqlcommand = "insert into basketitem (basketid, productid, productquantity) values ('2', '20', '2')";
+        array_push($sqlArray, $sqlcommand);
         
       
         //looping through the array of sqlcommands
@@ -1087,6 +1094,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
     
     //suggest things base all their basketitems
+    //find highest subtype of product this customer buy most often
     function suggestProduct($customerid){
             $servername = "localhost";
         $username = "jchen127";
@@ -1097,25 +1105,152 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
-        
+        $assocArray = array();  //this is the associative array that keeps track of counts
+                                //head will be the name, and the tail will be the count
+                                //head will be the categoryid
+                                //tail will be the count number so far
         //get all the stuff associated with the customerid
         $sql = "select basketid, customerid from basket where customerid = '$customerid'";
            
         $result = $conn->query($sql);
         if($result->num_rows > 0){
             while($row = $result->fetch_assoc()){
-                echo "<br>basketid: " . $row['basketid'] . " customerid " . $row['customerid'];
+          //      echo "<br>basketid: " . $row['basketid'] . " customerid " . $row['customerid'];
                 
                 //now get basketitems
-                $
-                $sql = "select from basketitems where basketid = "
+                $bid = $row['basketid'];
+                $sql = "select productid, productquantity from basketitem where basketid = '$bid'";
+                
+                $bitemResult = $conn->query($sql);
+                
+                if($bitemResult->num_rows > 0){
+                
+                    while($bitemRow = $bitemResult->fetch_assoc()){
+                    
+                 //       echo "<br>------- productid: " . $bitemRow['productid'] . " productquantity " . $bitemRow['productquantity'];
+                        $headName = $bitemRow['productid'];
+                        $numToAdd = intval($bitemRow['productquantity']);
+                        
+                        $sql = "select productid, categoryid from product where productid = '$headName'";    
+                    
+                        $presult = $conn->query($sql);
+                        if($presult->num_rows > 0){
+                            while($prow = $presult->fetch_assoc()){
+                //                echo "<br>################## productid: " . $prow['productid'] . " categoryid " . $prow['categoryid'];
+                                $cheadName = $prow['categoryid'];
+                               // array_key_exists($cheadName, $assocArray)
+                              //  if(is_null($assocArray[$cheadName]) === true){
+                                    if(array_key_exists($cheadName, $assocArray) == false){
+                            $assocArray[$cheadName] = $numToAdd;
+                            }else{
+                            $assocArray[$cheadName] = $assocArray[$cheadName] + $numToAdd; }
+                                
+                            }
+                        }
+                        //add things to the assoc array
+                        /*if(is_null($assocArray[$headName]) === true){
+                            $assocArray[$headName] = $numToAdd;
+                        }else
+                            $assocArray[$headName] = $assocArray[$headName] + $numToAdd; 
+                        }*/
+                    }
+                    
+                }
+                
                 
             }
+        }else{
+            return -1;
         }
         
+       // print_r($assocArray);
+        //find the subtype with highest category
+        $curbest = -1;
+        $categoryidBest;
+        
+        foreach($assocArray as $x => $x_value) {
+      //   echo "Key=" . $x . ", Value=" . $x_value;
+       // echo "<br>";
+            if($curbest < $x_value){
+                $curbest = $x_value;
+                $categoryidBest = $x; //giving it the best categoryid
+            }
+        }
+        if(isset($categoryidBest) == false){
+            return -1;
+        }
+      //  echo "highest num: " . $curbest . " best categoryid " . $categoryidBest;
+        
+        //now the categoryidbest is the best
+       //count the total number of product under that best category
+      // $sql = "select categoryid, productid, productname from product where categoryid = '$categoryidBest'";
+      $sql = "select count(*) as total from product where categoryid = '$categoryidBest'";
+       $result = $conn->query($sql);
+       if($result->num_rows >0){
+        while($newRow = $result->fetch_assoc()){
+          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+        //   echo "<br> count: ". $newRow['total'];
+            $total = intval($newRow['total']);  //where to stop
+        }
+       }
+       
+
+       $stopNum = rand(1, $total);  // number to stop
+       $curStopNum = 0;
+       $retId=-1;
+       //return the product at certain count
+       $sql = "select productid from product where categoryid = '$categoryidBest'";
+       $finalResult = $conn->query($sql);
+       if($finalResult->num_rows > 0){
+        while($finalRows = $finalResult->fetch_assoc()  ){
+            if($curStopNum >= $stopNum){
+                break;
+            }
+         //   echo "<br>finalrow productid " . $finalRows['productid'];
+            $retId = intval($finalRows['productid']);
+       //     echo "<br> " . $retId;
+            $curStopNum = $curStopNum + 1;
+            
+        }
+       }
+       
+       
+       
+    //   echo "<br>" . $stopNum . " retid: " . $retId;
+            
+       
+        
+        $conn->close();
+        return intval($retId);
+        //returning the pr
+    }
+ 
+    //return the product name and id base on the product id
+    function toStringProduct($pid){
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+      //  echo "<br> pid is : " . $pid;
+        $sql = "select productid, productname from product where productid = '$pid'";
+        $result = $conn->query($sql);
+         if($result->num_rows >0){
+       //     echo "<br> result num row is: " . $result->num_rows;
+        while($row = $result->fetch_assoc()){
+               // print_r($row);
+                echo "<br>Base on your past purchase your recommended product is: ". $row['productname'];
+        
+            }
+         }else{
+            echo "no result";
+         }
         
         $conn->close();
     }
-    
     
 ?>
