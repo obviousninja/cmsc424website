@@ -41,7 +41,8 @@
 	$email = $_POST["email"];
 	$password = $_POST["password"];
 	$address = $_POST["address"] . ", " . $_POST["city"] . ", " . $_POST["state"] . " " . $_POST["zipcode"];
-	$status = "active";
+	$state = "active";
+	$status = "ontime";
 	$sex = $_POST["sex"];
 	$paymentflag = false;
 	$creditcardnumber = NULL;
@@ -70,7 +71,7 @@
 
     if ($resultDist && mysqli_num_rows($resultDist) > 0) {
     	//Insert new customer
-		$sql = "INSERT INTO $database.customer  VALUES (NULL, '$name', $age, '$sex', '$password', 0, '$paymentflag', '$creditcardnumber', '$ccexpiration', '$bankaccountnumber', '$bankroutingnumber', '$address', '$phonenumber', '$email', '$status', -1)";
+		$sql = "INSERT INTO $database.customer  VALUES (NULL, '$name', $age, '$sex', '$password', 0, '$paymentflag', NULL, '$state', '$creditcardnumber', '$ccexpiration', '$bankaccountnumber', '$bankroutingnumber', '$address', '$phonenumber', '$email', '$status', -1)";
 		echo $sql . "<br>";
 		$result = mysqli_query($conn, $sql);
 

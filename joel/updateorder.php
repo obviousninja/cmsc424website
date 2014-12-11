@@ -19,12 +19,13 @@
 
 	$basketid = $_GET["basketid"];
 	$standingordertype = $_GET[$basketid . "standingordertype"];
+	$holdorder = $_GET[$basketid . "holdorder"];
 	$sql = "";
 
 	if ($standingordertype == "None") {
-		$sql = "UPDATE $database.basket SET isstandingorder = 0, standingordertype = '$standingordertype' WHERE basketid = $basketid";
+		$sql = "UPDATE $database.basket SET isstandingorder = 0, standingordertype = '$standingordertype', haltstandingorder = '$holdorder' WHERE basketid = $basketid";
 	} else {
-		$sql = "UPDATE $database.basket SET isstandingorder = 1, standingordertype = '$standingordertype' WHERE basketid = $basketid";
+		$sql = "UPDATE $database.basket SET isstandingorder = 1, standingordertype = '$standingordertype', haltstandingorder = '$holdorder' WHERE basketid = $basketid";
 	}
 	echo $sql . "<br>";
 	$result = mysqli_query($conn, $sql);

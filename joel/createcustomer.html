@@ -5,49 +5,50 @@
 </head>
 <body>
 	<?php
+		$_SESSION["searchtext"] = "";
 		include 'header.php';
 	?>
 
 	<form action="createcustomer.php" method="post" align="left">
 		<fieldset>
 		<legend>Customer Information</legend>
-		First Name: <input type="text" name="firstname">
+		First Name: <input type="text" name="firstname" required>
 		<br>
-		Last Name: <input type="text" name="lastname">
+		Last Name: <input type="text" name="lastname" required>
 		<br>
-		Age: <input type="number" name="age">
+		Age: <input type="number" name="age" required>
 		<br>
 		Sex:
 		<br>
-		<input type="radio" name="sex" value="m"> Male
+		<input type="radio" name="sex" value="m" checked> Male
 		<br>
 		<input type="radio" name="sex" value="f"> Female
 		<br>
-		Phone Number: <input type="tel" maxlength="10" name="phonenumber">
-		Email: <input type="email" name="email">
+		Phone Number: <input type="tel" maxlength="10" name="phonenumber" required>
+		Email: <input type="email" name="email" required>
 		<br>
-		Password: <input type="password" name="password">
+		Password: <input type="password" name="password" required>
 		<br>
 		<br>
-		Address: <input type="text" name="address">
+		Address: <input type="text" name="address" required>
 		<br>
-		City: <input type="text" name="city">
-		State: <input type="text" name="state">
-		Zip Code: <input type="number" name="zipcode">
+		City: <input type="text" name="city" required>
+		State: <input type="text" name="state" required>
+		Zip Code: <input type="number" name="zipcode" required>
 		<br>
 		<br>
 		<div>
 			Preferred Payment Method:
 			<br>
 			<a href="javascript:ShowContent('creditcardinfo')">
-				<input type="radio" name="payment" value="creditcard"> Credit Card
+				<input type="radio" name="payment" value="creditcard" checked> Credit Card
 			</a>
 			<br>
 			<a href="javascript:HideContent('creditcardinfo')">
 				<input type="radio" name="payment" value="check"> Check
 			</a>
 		</div>
-		<div id="creditcardinfo" style="display:none">
+		<div id="creditcardinfo" style="display:block">
 			Credit Card Number: <input type="number" name="creditcardnumber">
 
 			<br>

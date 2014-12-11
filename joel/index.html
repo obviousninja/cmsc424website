@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Nom.com</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="fpage.js" type="text/javascript"></script>
 
     <script type="text/javascript">
     	var counter = 0;
@@ -212,10 +214,15 @@
             }
 	   	}
 
+	   	function revealLogin() {
+	   		document.getElementById("existingcustomerbutton").style.display='none';
+	   		document.getElementById("loginBox").style.display='';
+	   	}
+
 
     </script>
 </head>
-<body>
+<body bgcolor="#D1F2A5">
 	<?php 
 		$_SESSION["searchtext"] = "";
 		include 'header.php';
@@ -241,31 +248,39 @@
 -->
 
 
-	<div class="mainScreen" style="color:#0000FF">
+	<div id="mainScreen" style="backgroundColor:#000000">
 		<h3>Product Categories:</h3>
 		<script type="text/javascript">
 			makeCategoryList();
 		</script> 
 	</div>
 
-	<div class="divContainer">
-
-		<div class="login" style="border: 1px solid black">
-			<h3>Customer Login</h3><br>
-			<form action="login.php" method="post" align="left">
-				Email: <input type="text" name="email">
-				<br>
-				Password: <input type="password" name="password">
-				<br>
-				<br>
-				<input type="submit" value="Login">
-				<br>
-				<a href="createcustomer.html">New Customer</a>
-			</form>
-		</div>
-
-		<div style="clear: both;" class="clear"></div>
+	<div class="customeroptions">
+		<span id="existingcustomerbutton" >Account Login</span>
+		<span id="regbutton">New Customer</span>
 	</div>
+
+	<div id="loginBox" name="loginBox" style="display:none">
+		
+		<form action="login.php" method="post" style="backgroundColor:#46B1A9">
+            <fieldset>
+            <legend>Login</legend>
+			Email: <input type="text" name="email" required>
+			<br>
+			Password: <input type="password" name="password" required>
+			<br>
+            Account Type: 
+            <input type="radio" name="privilege" value="admin">Administrator
+            <input type="radio" name="privilege" value="customer" checked>Customer
+			<br>
+            <input type="submit" value="Login">
+            <br>
+			</fieldset>
+		</form>
+	</div>
+
+
+	
 	
 
 

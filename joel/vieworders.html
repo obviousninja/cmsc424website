@@ -49,6 +49,7 @@
 				        $bid = $row["basketid"];
 				        $isstandingorder = $row["isstandingorder"];
 				        $standingordertype = $row["standingordertype"];
+				        $haltstandingorder = $row["haltstandingorder"];
 				        $sqlCost = "SELECT * FROM $database.basketitem bi, $database.product p WHERE $bid = bi.basketid AND bi.productid = p.productid";
 						$resultCost = mysqli_query($conn, $sqlCost);
 
@@ -92,7 +93,7 @@
 									$deliverydate = $row["deliverydate"];
 						    	}
 
-						    	$returnStr = $returnStr . "{" . "\"basketid\": " . $bid . ",\n\"ordertime\": " . "\"" . $ordertime . "\"" . ",\n\"estimatetimeofarrival\":" . "\"" . $estimatetimeofarrival . "\"" . ",\n\"deliverydate\":" . "\"" . $deliverydate . "\"" . ",\n\"totalitemcost\":" . round($totalPrice, 2) . ",\n\"costwithtax\":" . round($priceWithTax, 2) . ",\n\"isstandingorder\":" . $isstandingorder . ",\n\"standingordertype\":" . "\"" . $standingordertype . "\"" . "}, \n";
+						    	$returnStr = $returnStr . "{" . "\"basketid\": " . $bid . ",\n\"ordertime\": " . "\"" . $ordertime . "\"" . ",\n\"estimatetimeofarrival\":" . "\"" . $estimatetimeofarrival . "\"" . ",\n\"deliverydate\":" . "\"" . $deliverydate . "\"" . ",\n\"totalitemcost\":" . round($totalPrice, 2) . ",\n\"costwithtax\":" . round($priceWithTax, 2) . ",\n\"isstandingorder\":" . $isstandingorder . ",\n\"standingordertype\":" . "\"" . $standingordertype . "\"" . ",\n\"haltstandingorder\":" . $haltstandingorder . "}, \n";
 
 						    } else {
 						    	//echo "Transaction date finding failed!<br>";
@@ -186,6 +187,30 @@
 					} 
 					//setStandingButton.options[setStandingButton.options.selectedIndex].selected = true;
 					listElement.appendChild(setStandingButton);
+					if (item["standingordertype"] && item["standingordertype"] != "None") {
+						var hiddenBox = document.createElement("input");
+						hiddenBox.setAttribute("type", "hidden");
+						hiddenBox.setAttribute("name", item["basketid"] + "holdorder");
+						hiddenBox.setAttribute("value", "0");
+
+						var holdOrderBox = document.createElement("input");
+						holdOrderBox.setAttribute("type", "checkbox");
+						holdOrderBox.setAttribute("name", item["basketid"] + "holdorder");
+						holdOrderBox.setAttribute("form", item["basketid"] + "orderinformation");
+						holdOrderBox.setAttribute("value", "1");
+
+						if (item["haltstandingorder"]) {
+							holdOrderBox.setAttribute("checked", "true");
+						}
+
+						var label = document.createElement('label');
+						label.htmlFor = item["basketid"] + "holdorder";
+						label.appendChild(document.createTextNode('Put Order On Hold'));
+
+						listElement.appendChild(hiddenBox);
+						listElement.appendChild(holdOrderBox);
+						listElement.appendChild(label);
+					}
 
 
 		            var setStandingForm = document.createElement("form");
@@ -219,11 +244,6 @@
 		<script type="text/javascript">
 			generateOrders();
 		</script>
-
-		<form action="checkout.html" method="get">
-			<input type="text" name="customerid" value="<?php echo $_SESSION["cid"] ?>">
-			<input type="submit" value="Checkout">
-		</form>
 		
 
 	</body>

@@ -1,7 +1,7 @@
 <html>
 	<head><title>Nom.com</title></head>
 	<body>
-		<a href="index.html"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></a>
+		<a href="index.html"><img src="logo.png" name="logo" alt="Logo" style="width:530px;height:140px" align="center"></a>
 		<br><br>
 
 		<form action="productsearch.html" method="get">
@@ -15,7 +15,4 @@
 
 		<hr>
 
-	<?php
-	    
-
-	?>
+	</body>
