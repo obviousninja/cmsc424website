@@ -2,7 +2,7 @@
 	<head>
 		<title>Nom.com</title>
 	</head>
-	<body>
+	<body bgcolor="#D1F2A5">
 		<?php 
 			$cid = $_POST["customerid"];
 			echo "Get CID: " . $cid . "<br>";
@@ -24,7 +24,6 @@
 			    die("Connection failed: " . mysqli_connect_error());
 			}
 
-			/* CHECK HERE IF DELIVERY PERSON IS AVAILABLE ON ROUTE!!!!!!!!!!!!!! */
 
 			$cid = $_POST["customerid"];
 			$bid = $_POST["basketid"];
@@ -44,6 +43,8 @@
 			echo "DURATION: " . $tripduration . "<br>";
 			$timeofarrival = date("Y-m-d H:i:s", time() + $tripduration);
 			echo "Estimated Time of Delivery: " . $timeofarrival . "<br>";
+
+
 
 			$sql = "UPDATE $database.customer SET bankaccountnumber = '$bankaccountnumber', bankroutingnumber = '$bankroutingnumber' WHERE customerid = $cid";
 			$result = mysqli_query($conn, $sql);
@@ -92,48 +93,59 @@
 					    	echo "Insertion of bill failed!<br>";
 					    } else {
 					    	echo "Bill insertion success!<br>";
-					    	echo mysql_info() . "<br>";
+					    	//echo mysql_info() . "<br>";
 
-					    	/* Update customer balance and set new current basket */
-					    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, NULL, 0, '$date')"; 
-					    	$resultBasket = mysqli_query($conn, $sqlBasket);
+					    	/* Create dispatch ticket */
+					    	$sqlDispatch = "INSERT INTO $database.dispatchticket VALUES ($transID, $cid, $bid, NULL, (SELECT address FROM $database.customer WHERE customerid = $cid), '$date')";
+					    	$resultDispatch = mysqli_query($conn, $sqlDispatch);
 
-					    	if (!$resultBasket) {
-					    		echo "Basket creation failed!<br>";
+					    	if (!$resultDispatch) {
+					    		echo "Dispatch ticket creation failed!<br>";
 					    	} else {
-					    		echo "Basket creation successful!<br>";
+					    		echo "Dispatch ticket creation success!<br>";
+					    		/* Update customer balance and set new current basket */
+						    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, NULL, 0, '$date')"; 
+						    	$resultBasket = mysqli_query($conn, $sqlBasket);
 
-					    		$sqlBalance = "UPDATE $database.customer SET balance = balance - $totaltransactioncost, currentbasket = LAST_INSERT_ID() WHERE customerid = $cid";
-					    		$resultBalance = mysqli_query($conn, $sqlBalance);
+						    	if (!$resultBasket) {
+						    		echo "Basket creation failed!<br>";
+						    	} else {
+						    		echo "Basket creation successful!<br>";
 
-					    		if ($resultBalance) {
-					    			echo "Balance update successful!<br>";
+						    		$sqlBalance = "UPDATE $database.customer SET currentbasket = LAST_INSERT_ID() WHERE customerid = $cid";
+						    		$resultBalance = mysqli_query($conn, $sqlBalance);
 
-					    			/* update product count */
-					    			$sqlProduct = "SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid";
-					    			$resultProduct = mysqli_query($conn, $sqlProduct);
+						    		if ($resultBalance) {
+						    			echo "Current basket update successful!<br>";
 
-					    			if ($resultProduct && mysqli_num_rows($resultProduct) > 0) {
-					    				while ($row = mysqli_fetch_assoc($resultProduct)) {
-					    					$sqlUpdateCount = "UPDATE $database.product SET soldcount = soldcount + " . $row['productquantity'] . " WHERE productid = " . $row['productid'];
-					    					$resultUpdateCount = mysqli_query($conn, $sqlUpdateCount);
+						    			/* update product count */
+						    			$sqlProduct = "SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid";
+						    			$resultProduct = mysqli_query($conn, $sqlProduct);
 
-					    					if ($resultUpdateCount) {
-					    						echo "Product " . $row['productid'] . " update successful!<br>";
-					    					} else {
-					    						echo "Product " . $row['productid'] . " update FAILED!<br>";
-					    					}
-					    				}
+						    			if ($resultProduct && mysqli_num_rows($resultProduct) > 0) {
+						    				while ($row = mysqli_fetch_assoc($resultProduct)) {
+						    					$sqlUpdateCount = "UPDATE $database.product SET soldcount = soldcount + " . $row['productquantity'] . " WHERE productid = " . $row['productid'];
+						    					$resultUpdateCount = mysqli_query($conn, $sqlUpdateCount);
 
-					    				
-					    			} else {
-					    				echo "No products found to update?!<br>";
-					    			}
+						    					if ($resultUpdateCount) {
+						    						echo "Product " . $row['productid'] . " update successful!<br>";
+						    					} else {
+						    						echo "Product " . $row['productid'] . " update FAILED!<br>";
+						    					}
+						    				}
 
-					    		} else {
-					    			echo "Balance and currentbasket update failed!<br>";
-					    		}
+						    				
+						    			} else {
+						    				echo "No products found to update?!<br>";
+						    			}
+
+						    		} else {
+						    			echo "Currentbasket update failed!<br>";
+						    		}
+						    	}
+
 					    	}
+
 					    }
 					} else {
 						echo "Finding transaction ID failed!<br>";
