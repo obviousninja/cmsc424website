@@ -499,16 +499,7 @@
     }
     
     
-    //function for creating the database and populating the products
-    function estabConnect(){
-        //main
-        createDatabase();
-        createTables();
-        generateTest();
-        //populate database
-        scrapeMasterMarkK();
-        
-    }
+    
     
     function insert($sql){
          //open connection
@@ -873,7 +864,9 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         //"SELECT categoryid, category, subcategory FROM productcategory where category='$grandkey' and subcategory='$subkey'";
         //TODO retrieve the basketid that has lesser than current day, but greater than currentdate-mDay
         
+        
         $sqlcommand = "select distinct basketid, basketdate from basket where basketdate < '$endDateString' and basketdate > '$beginDateString'";
+
 
         //selects baskets within date
         $result = $conn->query($sqlcommand);
@@ -881,8 +874,10 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         //
         $totalSum = 0;  //total price currently accumulated
         $totalRow = 0;
+        echo "did i get here";
    if ($result->num_rows > 0) {
      // output data of each row
+     echo "i got here i hope";
      while($row = $result->fetch_assoc()) {
          echo "<br> BasketId: ". $row["basketid"]. " Basket Date: ". $row["basketdate"]. "<br>";
          
@@ -1008,12 +1003,19 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                     //delinquent
                    // echo " Delinquent name: "  . $row['name'];
                     $sqlCommand = "update customer set status='delinq', state='deact' where customerid='$cid'";
-                    
+                    if ($conn->query($sqlCommand) !== TRUE) {
+             
+            echo "Error updating record: " . $conn->error;
+         }
                     
                 }else if(intval($diffdate) > 30 && intval($diffdate) <= 60 &&  $curBalance > 0){
                     //late
                    // echo "late";
                      $sqlCommand = "update customer set status='late' where customerid='$cid'";
+                     if ($conn->query($sqlCommand) !== TRUE) {
+             
+            echo "Error updating record: " . $conn->error;
+         }
                     
                 }else{
                     //ontime
@@ -1021,10 +1023,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                     
                 }
                 //execute the command
-                if ($conn->query($sqlCommand) !== TRUE) {
-             
-            echo "Error updating record: " . $conn->error;
-         }
+                
                 
                 
             }
@@ -1745,5 +1744,209 @@ echo $date->format('Y-m-d H:i:s') . "\n";
      
 
    }
-   
+   //generate xx amount of customer base on count
+    function generateCustomer($count){
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+          /* if ($conn->query($createTestTable) === TRUE) {
+      echo "Table MyGuests created successfully";
+    }
+     
+     $insertThing = "insert into testTable (firstname, lastname) values ('sick', 'hobo')";
+     
+     if ($conn->query($insertThing) === TRUE) {
+      echo "Table MyGuests created successfully";
+    } else {
+      echo "Error creating table: " . $conn->error;
+    }   */
+        
+        for($x=0; $x<$count; $x++ ){
+            $name = "person" . $x;
+            $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
+            values ( '$name', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'crazyPerson@gmail.com', 'ontime' )";
+            //echo "<br>" . $sql;
+        
+     if ($conn->query($sql) === TRUE) {
+           echo "customer person $x created successfully";
+     } else {
+           echo "Error creating customer: " . $conn->error;
+     }  
+            
+        }
+        //bonus person with valid email
+        $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
+            values ( 'Jing', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'infinityarc@gmail.com', 'delinq' )";
+        $sql1 = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
+            values ( 'Joel', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'jsamel@terpmail.umd.edu', 'delinq' )";
+        
+        if ($conn->query($sql) === TRUE) {
+           echo "customer jing created successfully";
+     } else {
+           echo "Error creating customer: " . $conn->error;
+     }
+     if ($conn->query($sql1) === TRUE) {
+           echo "customer joel created successfully";
+     } else {
+           echo "Error creating customer: " . $conn->error;
+     }  
+        $sql = "insert into administrator (name, password, address, phonenumber, email) values ('jing', '111', 'wailing cavern', '1112223333', 'infinityarc@gmail.com')";
+         if ($conn->query($sql) === TRUE) {
+           echo "administrator jing created successfully";
+     } else {
+           echo "Error creating customer: " . $conn->error;
+     }
+        
+        $conn->close();
+    }
+        function generateDeliveryGuy($count){
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        for($x=0; $x<$count; $x++ ){
+             $name = "deliveryguy" . $x;
+             $sql = "insert into deliveryperson (name, address, workstart, workend, salary, curlocation, curroute)
+             values ('$name', '123 ebola street', '1:00', '1:00', '10.00', 'home', 'zNation')";
+             
+              if ($conn->query($sql) === TRUE) {
+           echo "Delivery person $x created successfully";
+     } else {
+           echo "Error creating delivery person: " . $conn->error;
+     }  
+             
+        }
+        
+        
+        $conn->close();
+    }
+        function generateBasket(){
+         date_default_timezone_set('America/New_York');
+         set_time_limit(0);
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        $maxAmount = rand(200, 10000);
+        //echo $maxAmount;
+        
+        for($i=0;$i<$maxAmount;$i++){
+             $customerNum = rand(1, 50);
+            $curTime = date("Y-m-d H:i:s");
+            echo "customernum is: " . $customerNum . " curTime " . $curTime;
+            $sql = "insert into basket (customerid, standingordertype, basketdate) values ('$customerNum', 'daily' ,'$curTime')";        
+           
+                if ($conn->query($sql) === TRUE) {
+               echo "Basket $i generated successfully";
+          }else{
+             echo "Error generating basket: " . $conn->error;
+          }
+            
+            generateBaskeItems($conn);
+            
+            ob_flush();
+            flush();
+            sleep(4);
+        }
+     
+        
+        $conn->close();
+    }
+        function generateBaskeItems($conn){
+           
+        
+        //get current count of products
+        //$sql = "select count(*) as total from product where categoryid = '$categoryidBest'";
+        $sql = "select count(*) as total from product";
+         $result1 = $conn->query($sql);
+       if($result1->num_rows >0){
+        while($newRow = $result1->fetch_assoc()){
+          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+        //   echo "<br> count: ". $newRow['total'];
+            $totalProduct = intval($newRow['total']);  //where to stop
+        }
+       }
+       echo "<br>total product is: " . $totalProduct;
+       
+        
+          
+          $maxAmount1 = rand(1, 10);
+           for($i=0;$i<$maxAmount1;$i++){
+            //get current count of baskets
+        $sql = "select count(*) as total from basket";
+         $result1 = $conn->query($sql);
+       if($result1->num_rows >0){
+        while($newRow = $result1->fetch_assoc()){
+          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+        //   echo "<br> count: ". $newRow['total'];
+            $totalBasket = intval($newRow['total']);  //where to stop
+        }
+       }
+          echo "<br>total basket is: " . $totalBasket;
+          if($totalBasket < 5){
+            return -1;
+          }
+          
+          
+             $bid = rand(1, $totalBasket);
+             $pid = rand(1, $totalProduct);
+             $quan = rand(1, 10);
+            $sql = "insert into basketitem (basketid, productid, productquantity) values ('$bid', '$pid', '$quan')";        
+           
+                if ($conn->query($sql) === TRUE) {
+               echo "Basket $i generated successfully";
+          }else{
+             echo "Error generating basket: " . $conn->error;
+          }
+            
+           
+            
+        }
+          
+          
+        
+    }
+
+   //function for creating the database and populating the products
+    function estabConnect(){
+        
+        
+        header( 'Content-type: text/html; charset=utf-8' );
+        //main
+     //   createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
+        createTables();    //temporarily offline  THIS IS THE RIGHT CODE
+        //generate Customer  
+        generateCustomer(50); //temporarily offline THIS IS THE RIGHT CODE
+        //generate Deliver Guy
+    generateDeliveryGuy(50); //temporarily offline THIS IS THE RIGHT CODE
+        //generate basket
+      generateBasket();  //this generates basket and basket items
+     
+    
+        
+        
+        
+        //populate database
+       //scrapeMasterMarkK();  //temporarily offline until other database items are generated  THIS IS THE RIGHT CODE
+    }
+    
+    //estabConnect(); //start the scraper
 ?>
