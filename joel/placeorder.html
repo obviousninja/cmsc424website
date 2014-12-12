@@ -4,6 +4,8 @@
 	</head>
 	<body bgcolor="#D1F2A5">
 		<?php 
+			require_once "Mail.php";
+
 			$cid = $_POST["customerid"];
 			echo "Get CID: " . $cid . "<br>";
 			$_SESSION["cid"] = $_POST["customerid"];
@@ -95,7 +97,99 @@
 					    	echo "Bill insertion success!<br>";
 					    	//echo mysql_info() . "<br>";
 
-					    	/* Create dispatch ticket */
+					    	$sqlCust = "SELECT name, email, LAST_INSERT_ID() FROM $database.customer WHERE customerid = $cid";
+					    	$resultCust = mysqli_query($conn, $sqlCust);
+					    	$cname = NULL;
+					    	$to = NULL;
+					    	$billid = NULL;
+
+					    	if ($resultCust && mysqli_num_rows($resultCust) > 0) {
+					    		while ($row = mysqli_fetch_assoc($resultCust)) {
+					    			$cname = $row["name"];
+					    			$to = $row["email"];
+					    			$billid = $row["LAST_INSERT_ID()"];
+					    		}
+
+					    		echo $billid . "<br>";
+
+					    		//send email to the customer
+					            $from = 'smallfry9000@yahoo.com';
+					            $subject = "Your Nom.com Billing Statement";
+					            $body = "Hi $cname,\n\nBelow is your billing statement from Nom.com.\n\n";
+
+					            $body = $body . "Items Purchased:\n";
+
+					            $sqlGetItems = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p WHERE b.basketid = (SELECT basketid FROM $database.transaction WHERE transactionid = $transID) AND b.basketid = bi.basketid AND bi.productid = p.productid";
+						    	$resultGetItems = mysqli_query($conn, $sqlGetItems);
+
+						    	if ($resultGetItems && mysqli_num_rows($resultGetItems) > 0) {
+						    		while($row2 = mysqli_fetch_assoc($resultGetItems)) {
+						    			//echo $row2["productid"] . ": " . $row2["productname"] . "\t";
+						    			$body = $body . $row2["productid"] . ": " . $row2["productname"] . "\t";
+						    			if ($row2["isonsale"]) {
+						    				//echo $row2["saleprice"] . "\t";
+						    				$body = $body . $row2["saleprice"] . "\t";
+						    			} else {
+						    				//echo $row2["price"] . "\t";
+						    				$body = $body . $row2["price"] . "\t";
+						    			}
+						    			//echo "Quantity: " . $row2["productquantity"] . "<br>";
+						    			$body = $body . "Quantity: " . $row2["productquantity"] . "\n";
+						    		}
+
+						    		$sqlBillInfo = "SELECT * FROM $database.transaction t, $database.bill b, $database.customer c WHERE t.transactionid = $transID AND b.transactionid = $transID AND t.customerid = c.customerid";
+						    		$resultBillInfo = mysqli_query($conn, $sqlBillInfo);
+
+						    		if ($resultBillInfo && mysqli_num_rows($resultBillInfo) > 0) {
+						    			while($row = mysqli_fetch_assoc($resultBillInfo)) {
+						    				$body = $body . "\nTime of Order: " . $row["ordertime"] . "\n\n";
+											
+											$body = $body . "Total Item Cost: $" . money_format('%i', $row["totalitemcost"]) . "\n";
+		    								$body = $body . "Cost With Tax: $" . money_format('%i', $row["costwithtax"]) . "\n";
+									    	$body = $body . "Delivery Charge: $" . money_format('%i', $row["deliverycharge"]) . "\n";
+									    	$body = $body . "Transaction Total: $" . money_format('%i', $row["transactiontotal"]) . "\n";
+									    	//$body = $body . "Tip: <input type='number' name='tip'><br><br>";
+
+						    			}
+
+						    			$headers = array(
+							             	'From' => $from,
+							            	'To' => $to,
+							         		'Subject' => $subject
+							            );
+
+								        $smtp = Mail::factory('smtp', array(
+									        'host' => 'ssl://smtp.mail.yahoo.com',
+									        'port' => '465',
+									        'auth' => true,
+									        'username' => 'smallfry9000@yahoo.com',
+									        'password' => 'insaneAsylum1'
+								    	));
+
+								        $mail = $smtp->send($to, $headers, $body);
+
+								        if (PEAR::isError($mail)) {
+								      		echo('<p>' . $mail->getMessage() . '</p>');
+								        } else {
+								      		echo('<p>Message successfully sent!</p>');
+								        }
+						    		} else {
+						    			echo "Bill info search FAILED!<br>";
+						    		}
+
+						    		
+						    	} else {
+						    		echo "GETTING BASKET ITEMS FAILED!<br><br>";
+						    	}
+						    	echo $body . "\n";
+
+					            
+					    	} else {
+					    		echo "Finding customer info failed; no mailing<br>";
+					    	}
+			                
+			                
+							/* Create dispatch ticket */
 					    	$sqlDispatch = "INSERT INTO $database.dispatchticket VALUES ($transID, $cid, $bid, NULL, (SELECT address FROM $database.customer WHERE customerid = $cid), '$date')";
 					    	$resultDispatch = mysqli_query($conn, $sqlDispatch);
 

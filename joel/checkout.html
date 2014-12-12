@@ -148,12 +148,12 @@
 			    	$_SESSION['deliverycharge'] = $price;
 			    	$_SESSION['tripduration'] = $time;
 
-			    	echo "<input type=\"number\" name=\"customerid\" value=\"" . $_SESSION['cid'] . "\">";
-					echo "<input type=\"number\" name=\"basketid\" value=\"" . $_SESSION['basketid'] . "\">";
-					echo "<input type=\"number\" name=\"totalitemcost\" value=\"" . $_SESSION['totalitemcost'] . "\">";
-					echo "<input type=\"number\" name=\"costwithtax\" value=\"" . $_SESSION['costwithtax'] . "\">";
-					echo "<input type=\"number\" name=\"deliverycharge\" value=\"" . $_SESSION['deliverycharge'] . "\">";
-					echo "<input type=\"number\" name=\"tripduration\" value=\"" . $_SESSION['tripduration'] . "\">";
+			    	echo "<input type=\"number\" name=\"customerid\" value=\"" . $_SESSION['cid'] . "\" style='display:none'>";
+					echo "<input type=\"number\" name=\"basketid\" value=\"" . $_SESSION['basketid'] . "\" style='display:none'>";
+					echo "<input type=\"number\" name=\"totalitemcost\" value=\"" . $_SESSION['totalitemcost'] . "\" style='display:none'>";
+					echo "<input type=\"number\" name=\"costwithtax\" value=\"" . $_SESSION['costwithtax'] . "\" style='display:none'>";
+					echo "<input type=\"number\" name=\"deliverycharge\" value=\"" . $_SESSION['deliverycharge'] . "\" style='display:none'>";
+					echo "<input type=\"number\" name=\"tripduration\" value=\"" . $_SESSION['tripduration'] . "\" style='display:none'>";
 					
 					if ($isCheck) {
 				    	echo "<div>Check Information<br>";

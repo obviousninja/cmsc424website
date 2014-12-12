@@ -1,3 +1,4 @@
+<body bgcolor="#D1F2A5">
 <?php
 	$servername = "localhost";
 	$username = "jchen127";
@@ -52,3 +53,5 @@
 	mysqli_close($conn);
 
 ?>
+
+</body>

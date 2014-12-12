@@ -59,7 +59,7 @@
 				    while($row = mysqli_fetch_assoc($result)) {
 				        //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
 	   
-				        $returnStr = $returnStr . "{" . "\"transactionid\": " . $row["transactionid"] . ",\n\"basketid\": " . $row["basketid"] . ",\n\"ordertime\": " . "\"" . $row["ordertime"] . "\"" . ",\n\"estimatetimeofarrival\":" . "\"" . $row["estimatetimeofarrival"] . "\"" . ",\n\"deliverydate\":" . "\"" . $row["deliverydate"] . "\"" . ",\n\"paymentflag\": " . $row["paymentflag"] . ",\n\"totalitemcost\":" . $row["totalitemcost"] . ",\n\"costwithtax\":" . $row["costwithtax"] . ",\n\"deliverycharge\":" . $row["deliverycharge"] . ",\n\"tip\":" . "\"" . $row["tip"] . "\"" . ",\n\"transactiontotal\":" . $row["transactiontotal"] . ",\n\"paidflag\":" . $row["paidflag"] . ",\n\"isstandingorder\":" . $row["isstandingorder"] . ",\n\"standingordertype\":" . "\"" . $row["standingordertype"] . "\"" . "}, \n";
+				        $returnStr = $returnStr . "{" . "\"transactionid\": " . $row["transactionid"] . ",\n\"customerid\": " . $row["customerid"] . ",\n\"basketid\": " . $row["basketid"] . ",\n\"ordertime\": " . "\"" . $row["ordertime"] . "\"" . ",\n\"estimatetimeofarrival\":" . "\"" . $row["estimatetimeofarrival"] . "\"" . ",\n\"deliverydate\":" . "\"" . $row["deliverydate"] . "\"" . ",\n\"paymentflag\": " . $row["paymentflag"] . ",\n\"totalitemcost\":" . $row["totalitemcost"] . ",\n\"costwithtax\":" . $row["costwithtax"] . ",\n\"deliverycharge\":" . $row["deliverycharge"] . ",\n\"tip\":" . "\"" . $row["tip"] . "\"" . ",\n\"transactiontotal\":" . $row["transactiontotal"] . ",\n\"paidflag\":" . $row["paidflag"] . ",\n\"isstandingorder\":" . $row["isstandingorder"] . ",\n\"standingordertype\":" . "\"" . $row["standingordertype"] . "\"" . "}, \n";
 				    }
 
 
@@ -101,7 +101,7 @@
 			                	if (item[property] == 1) {
 			                		listItem.innerHTML = "PAID";
 			                	} else {
-			                		listItem.innerHTML = "NOT PAID";
+			                		listItem.innerHTML = "NOT PAID<br><form action='paybill.html' method='get'><input type='number' name='transactionid' value=" + item["transactionid"] + " style='display:none'><input type='number' name='customerid' value=" + item["customerid"] + " style='display:none'><input type='submit' value='Pay Bill'></form>";
 			                	}
 			                } else if (property === "paymentflag") {
 			                	if (item[property] == 0) {
@@ -119,7 +119,7 @@
 			                	listItem.innerHTML = "Transaction Total: $" + item[property].toFixed(2);
 			                } else if (property === "tip") {
 			                	if (item[property]) {
-			                		listItem.innerHTML = "Tip: $" + item[property].toFixed(2);
+			                		listItem.innerHTML = "Tip: $" + (parseFloat(item[property]).toFixed(2));
 			                	} else {
 			                		listItem.innerHTML = "Tip: $0.00";
 			                	}
@@ -175,7 +175,7 @@
 			}
 		</script>
 	</head>
-	<body>
+	<body bgcolor="#D1F2A5">
 		<?php 
 			$cid = $_GET["customerid"];
 			echo "Get CID: " . $cid . "<br>";
