@@ -50,6 +50,7 @@
             isonsale BOOLEAN,
             saleprice FLOAT unsigned,
             taxable BOOLEAN,
+            beginsaledate datetime,
             soldcount int(10) unsigned DEFAULT 0,
             PRIMARY KEY (productid),
             FOREIGN KEY (categoryid) references productcategory(categoryid)
@@ -965,7 +966,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
    // estabConnect();  //this is the correct code. REENABLE for database repopulation
     
-    //mark delinquent customer if they didn't make payment in 30 days
+    //mark delinquent customer if they didn't make payment in 30 days, deactivate a customer if he is delinquent
     function markCustomer(){
          date_default_timezone_set('America/New_York');
         $servername = "localhost";
@@ -1006,7 +1007,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 if(intval($diffdate) > 60 &&  $curBalance > 0){
                     //delinquent
                    // echo " Delinquent name: "  . $row['name'];
-                    $sqlCommand = "update customer set status='delinq' where customerid='$cid'";
+                    $sqlCommand = "update customer set status='delinq', state='deact' where customerid='$cid'";
                     
                     
                 }else if(intval($diffdate) > 30 && intval($diffdate) <= 60 &&  $curBalance > 0){
@@ -1094,7 +1095,8 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
     
     //suggest things base all their basketitems
-    //find highest subtype of product this customer buy most often
+    //returns -1 or an integer, this number cannot possibly be 0.
+    //returns a productid in integer, if -1 is returned, then the customer has no history of buying anything
     function suggestProduct($customerid){
             $servername = "localhost";
         $username = "jchen127";
@@ -1221,7 +1223,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
        
         
         $conn->close();
-        return intval($retId);
+        return intval($retId);  //the randomly generated product id
         //returning the pr
     }
  
@@ -1252,5 +1254,496 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         $conn->close();
     }
+   
+    //reactivate the customer if the customer is deactivated or vice versa
+    function reDeActivateCustomer($customerid){
+        //find out if a customer if deactivated, if so, reactivate or vice versa
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        //select the customer state given the customerid
+        $sqlcommand = "select customerid, state from customer where customerid ='$customerid'";
+        $result = $conn->query($sqlcommand);
+        if($result->num_rows >0){
+            while($row = $result->fetch_assoc()){
+             //   echo "cur state of customer: " . $row['state'];
+                if(strcasecmp($row['state'], 'act') == 0){
+                    //deactivate the customer
+                    $sqlcommand = "update customer set state='deact' where customerid = '$customerid'";
+                }else if(strcasecmp($row['state'], 'deact') == 0){
+                    //reactivate the customer
+                    $sqlcommand = "update customer set state='act' where customerid = '$customerid'";
+                }else{
+                    //doesn't match either, by default it is set to active state
+                    $sqlcommand = "update customer set state='act' where customerid = '$customerid'";
+                }
+                
+                if ($conn->query($sqlcommand) === TRUE) {
+      echo "Customer State Successfully Changed";
+} else {
+    echo "Error Update Customer State: " . $conn->error;
+}
+            }
+            
+        }else{
+            echo "No Such Customer Exist";
+        }
+        
+        
+        $conn->close();
+    }
+    //takes 2 params, productid and what to do. add or remove
+    function addRemoveProduct($pid, $what){
+        //find out if a customer if deactivated, if so, reactivate or vice versa
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        //  $sql = "DELETE FROM MyGuests WHERE id=3";
+        if(strcasecmp($what, 'add') == 0){
+            //open a new webpage that allows adding products
+            
+            echo "<script language='javascript'> window.open('addProduct.php','_blank') </script>";       
+            
+        }else if(strcasecmp($what, 'remove') == 0){
+            //remove the product from the database
+            $sql = "delete from product where productid='$pid'";
+            if ($conn->query($sql) === TRUE) {
+    echo "Record deleted successfully";
+} else {
+    echo "Error deleting record: " . $conn->error;
+}
+
+            
+        }
+        
+        $conn->close();
+        
+    }
+    //must make sure the cid agrees with the product categoryid from the productcategory table
+    function addProduct( $productName, $imageurl, $price, $cid, $salestate , $saleprice, $taxable){
+               $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+         /* if ($conn->query($createTestTable) === TRUE) {
+      echo "Table MyGuests created successfully";
+    }
+     
+     $insertThing = "insert into testTable (firstname, lastname) values ('sick', 'hobo')";
+     if ($conn->query($insertThing) === TRUE) {
+      echo "Table MyGuests created successfully";
+    } else {
+      echo "Error creating table: " . $conn->error;
+    }   */
+         $conprice = floatval($price);
+         $concid = intval($cid);
+         $consaleprice = floatval($saleprice);
+
+         
+        $sql = "insert into product (productname, imageurl, price, categoryid, isonsale, saleprice, taxable) values ('$productName', '$imageurl', '$conprice', '$concid', '$salestate' , '$consaleprice', '$taxable')";
+     if ($conn->query($sql) === TRUE) {
+      echo "inserted into product table successfully";
+    } else {
+      echo "Error inserting into table: " . $conn->error;
+    }   
+        
+        
+        $conn->close();
     
+   }
+   
+   //update delivery person, if exist
+   //if delivery person do not exist, then prompt insertion
+   function removeDeliveryPerson($personid){
+             $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+         
+            //remove the delivery person from the database
+            $sql = "delete from deliveryperson where dpid='$personid'";
+            if ($conn->query($sql) === TRUE) {
+    echo "Record deleted successfully";
+} else {
+    echo "Error deleting record: " . $conn->error;
+}
+        
+        
+        
+       $conn->close();
+   }
+   
+   function addDeliveryPerson($name, $address, $ws, $we, $salary, $curlocation, $curroute){
+          $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        /* if ($conn->query($createTestTable) === TRUE) {
+      echo "Table MyGuests created successfully";
+    }
+     
+     $insertThing = "insert into testTable (firstname, lastname) values ('sick', 'hobo')";
+     if ($conn->query($insertThing) === TRUE) {
+      echo "Table MyGuests created successfully";
+    } else {
+      echo "Error creating table: " . $conn->error;
+    }   */
+        $sqlcommand = "insert into deliveryperson (name, address, workstart, workend, salary, curlocation, curroute) values ('$name', '$address', '$ws', '$we', '$salary', '$curlocation', '$curroute')";
+     if ($conn->query($sqlcommand) === TRUE) {
+      echo "Delivery Person Created Successfully";
+    } else {
+      echo "Error creating Delivery Person: " . $conn->error;
+    } 
+        
+        $conn->close();
+    
+   }
+   
+   function modifyDeliveryPerson($did, $name, $address, $ws, $we, $salary, $curlocation, $curroute){
+      $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        /*
+                 $updatecommand = "update product set soldcount= '$newCount' where productid = '$pid'";
+            if ($conn->query($updatecommand) === TRUE) {
+    echo "Record updated successfully";
+} else {
+    echo "Error updating record: " . $conn->error;
+}
+         */
+       //check if the delivery person exist if not quit, otherwise modify
+       $sqlcommand = "select name from deliveryperson where dpid = '$did'";
+       $result = $conn->query($sqlcommand);
+       if($result->num_rows > 0){
+        //exist
+        echo "person exist yikes";
+        //updating the delivery person
+        $sqlcommand = "update deliveryperson set name= '$name', address= '$address', workstart= '$ws', workend='$we', salary= '$salary', curlocation= '$curlocation', curroute= '$curroute' where dpid = '$did'";
+      //execute
+                if ($conn->query($sqlcommand) === TRUE) {
+    echo "Delivery Person Profile updated successfully";
+} else {
+    echo "Error Updating Profile: " . $conn->error;
+}
+       }else{
+        //doesn't exist
+        echo "No Such Delivery Person Exist Please Enter a Proper Delivery Person";
+        
+       }
+       
+        
+        $conn->close();
+   }
+   
+   //returns one random item to go on sale, it will return a product id
+   //it is entirely possble to return identical product to go on sale, but
+   //but since no matter how many times the onsale flag is modified
+   //there can only be one result, thus all we need to worry about is the
+   //
+   function findItemToGoSale(){
+    //find total number of products that are on in the table
+    $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        /*
+         $sql = "select count(*) as total from product where categoryid = '$categoryidBest'";
+       $result = $conn->query($sql);
+       if($result->num_rows >0){
+        while($newRow = $result->fetch_assoc()){
+          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+        //   echo "<br> count: ". $newRow['total'];
+            $total = intval($newRow['total']);  //where to stop
+        }
+       }
+        */
+        //finding upper bound
+        $sql = "select count(*) as total from product";
+        $result = $conn->query($sql);
+       if($result->num_rows >0){
+        while($newRow = $result->fetch_assoc()){
+         
+            $total = intval($newRow['total']);  //where to stop
+        }
+       }else{
+        echo "Fatal Error, the product table is not populated, Application crashing...";
+       }
+        //$total is the upper bound
+        $randProductId = rand(1, $total);
+        
+        $conn->close();
+        return $randProductId;
+   }
+   //set onsale flag of  product with $pid
+   //also set their prices
+   
+   function setProductToSale($pid){
+    date_default_timezone_set('America/New_York');
+     $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+        //product has to exist, it is impossible it will not be
+        //product flag will be updated
+        /*
+            //updating the delivery person
+        $sqlcommand = "update deliveryperson set name= '$name', address= '$address', workstart= '$ws', workend='$we', salary= '$salary', curlocation= '$curlocation', curroute= '$curroute' where dpid = '$did'";
+      //execute
+                if ($conn->query($sqlcommand) === TRUE) {
+    echo "Delivery Person Profile updated successfully";
+} else {
+    echo "Error Updating Profile: " . $conn->error;
+}
+        */
+        //get the current price
+        $sqlcommand = "select price, productname, beginsaledate from product where productid = '$pid'";
+        $result = $conn->query($sqlcommand);
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+                //retrieve the price
+               
+                
+                $curPrice = floatval($row['price']);
+                $calcSalePrice = $curPrice/2;
+                $startDate = date("Y-m-d H:i:s");
+           //     echo "<br> currentbeginsaledate: " . $row['beginsaledate'] . " unstored date: " . $startDate;
+           //      echo "<br>the current price is: " . $row['price'] . " for " . $row['productname'] . " new price: " . $calcSalePrice;
+                //set the onsaleflag and set the sale price, also set the date of it being on sale 
+                $sqlcommand = "update product set isonsale=1, saleprice='$calcSalePrice', beginsaledate='$startDate' where productid = '$pid'";
+                if ($conn->query($sqlcommand) === TRUE) {
+    echo "<br>onsale status updated successfully";
+} else {
+    echo "<br>Error Updating onsale status: " . $conn->error;
+}
+                
+            }
+        }else{
+            echo "Fatal Error, an error occurred while searching for the product, Application terminating...";
+        }
+        
+        $conn->close();
+   }
+   
+   //param: customerid and the array of product that are on sale, customer has to exist as it will definitely be
+   //if this customer have any of those products in their basket, then email him with the items on the array
+   function isbrought($customerid, $productArray, $conn){
+       /*  $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }*/
+        $arrayThatGoesEmail = array();
+        //find baskets with the customer id
+        $sqlcommand = "select distinct basketid from basket where customerid ='$customerid'";
+        $result = $conn->query($sqlcommand);
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+           //     echo "<br> basketid is: " . $row['basketid'];
+                //check the basket items of basket id
+                $curBid = intval($row['basketid']);
+            //    echo "<br> basketid curbid: " . $curBid;
+                $sqlcommand = "select distinct basketid, productid from basketitem where basketid = '$curBid'";
+                $resultOne = $conn->query($sqlcommand);
+                if($resultOne->num_rows > 0){
+                    while($rowOne = $resultOne->fetch_assoc()){
+                 //       echo "<br> Basketid: " . $rowOne['basketid'] . " productid:  " . $rowOne['productid'];
+                        $pid = intval($rowOne['productid']);
+                        if(contain($pid, $productArray) == 1){
+                            //it is contained in product array
+                            array_push($arrayThatGoesEmail, $pid);
+                        }else{
+                            //do nothing
+                        }
+                        
+                    }
+                }
+                
+            }
+        }else{
+            echo ".";
+        }
+        //check if array is empty, if not send email to the customer
+        if(count($arrayThatGoesEmail) != 0){
+            $uniquefyArr = array_values(array_unique($arrayThatGoesEmail));
+          //  echo "<br>riginal array <br>";
+         //   print_r($productArray);
+          //  echo "<br>something matched. output array: <br>";
+          //  print_r($uniquefyArr);
+             //find the email of this guy
+        $sqlcommand = "select name, customerid, email from customer where customerid ='$customerid'";
+        //should return exactly one result
+        $emailresult = $conn->query($sqlcommand);
+        if($emailresult->num_rows > 0){
+            while($emailRow = $emailresult->fetch_assoc()){
+          //      echo "<br>this guy's email is: " . $emailRow['email'] . " his customerid and name is: " . $emailRow['customerid'] . $emailRow['name'];
+            
+            $emailName = $emailRow['name'];
+            $emailemail = $emailRow['email'];
+            $emailString = implode($uniquefyArr);
+            //send email to the customer
+            $from = 'smallfry9000@yahoo.com';
+            $to = $emailemail;
+            $subject = "Your bought Item is on Sale $emailName";
+            $body = "Hi,\n\n the following items/item that you bought are on sale. don't miss out! item number: $emailString";
+            
+            $headers = array(
+             'From' => $from,
+            'To' => $to,
+         'Subject' => $subject
+            );
+
+        $smtp = Mail::factory('smtp', array(
+        'host' => 'ssl://smtp.mail.yahoo.com',
+        'port' => '465',
+        'auth' => true,
+        'username' => 'smallfry9000@yahoo.com',
+        'password' => 'insaneAsylum1'
+    ));
+
+        $mail = $smtp->send($to, $headers, $body);
+
+        if (PEAR::isError($mail)) {
+      echo('<p>' . $mail->getMessage() . '</p>');
+        } else {
+      echo('<p>Message successfully sent!</p>');
+        }
+                
+                
+            }
+        }
+        //end of sending mail
+        echo "<br>this customer with similar product interest are emailed";
+        }
+        
+       
+        
+        echo "<br>this customer with customerid of $customerid is not emailed";
+        
+      /*  $conn->close();*/
+    
+   }
+  
+   //returns 1 if true element in the array, -1 if not
+   function contain($element, $array){
+    for($x=0; $x<count($array); $x++){
+        if($element == $array[$x]){
+            return 1;
+        }
+    }
+    return -1;
+   }
+   //go through every single customer and execute isbrought
+   function customerloop($arrToPass){
+          $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        //going through every single customer
+        $sqlcommand = "select customerid from customer";
+        $result = $conn->query($sqlcommand);
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+          //   echo '<br>customer id' . $row['customerid'];
+             $cid = intval($row['customerid']);
+
+             isbrought($cid, $arrToPass, $conn);
+            }
+        }
+        
+    $conn->close(); //close connection before doing this as the new connection will be made       
+   }
+   function placeOnSale(){
+        
+     //echo "swoop down and ate your heart";
+     //at least 1 item will go on sale and at max 7 items will go on sale
+     $saleItemNum = rand(1, 7);
+     //find the items that will go on sale and update their onsale price and turn their onsale flag to true
+     //echo "<br>current on sale item num: " . $saleItemNum . "<br>";
+     
+     $onSaleArray = array(); //productids of the items that will go on sale
+     //push however many times of the random product into the array
+     for($x=0; $x < $saleItemNum; $x++){
+        array_push($onSaleArray, findItemToGoSale());
+     }
+     //uniquefy the array so there will be no duplicate
+     $uniqueOnSaleArray = array_unique($onSaleArray); //array of product id that will go on sale
+     echo "<br>following are the items that are set to be onsale: <br>";
+     print_r($uniqueOnSaleArray);
+     
+     //find the items in $uniqueOnSaleArray in product and update their flag and price
+     for($x=0; $x< count($uniqueOnSaleArray); $x++){
+        setProductToSale($uniqueOnSaleArray[$x]);
+      }
+     //send emails to the customer that bought this item
+        //check if one customer bought any of those items
+        //$testArray = array(1, 2, 3, 4, 5, 20);
+        //print_r($testArray);
+      // isbrought(1, $testArray);
+        
+        //echo "<br> this could be true: " . count(array());
+     //go through every single customers
+     customerloop($uniqueOnSaleArray);
+     
+     //revert the item onsale back to not on sale after a week time
+     
+     
+
+   }
+   
 ?>
