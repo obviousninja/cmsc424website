@@ -19,10 +19,10 @@ $(document).ready(function(){
  
  var requestLegend = "<legend>Administrator Request</legend>";
  var RCRQ = "<br><li><a href='http://www.google.com' target='ActionFrame'>remove customer request <b>X</b></a></li><br>";
- var DRCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>reactivate or deactivate customer request <b>X</b></a></li><br>";
- var ARPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>add or remove product request <b>X</b></a></li><br>";
- var POSRQ = "<li><a href='http://www.google.com' target='ActionFrame'>place on sale request <b>X</b></a></li><br>";
- var UDPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update delivery person request <b>X</b></a></li><br>";
+ var DRCRQ = "<li><a href='toggleActivateCustomer.php' target='ActionFrame'>reactivate or deactivate customer request</a></li><br>";
+ var ARPRQ = "<li><a href='addRemoveProduct.php' target='ActionFrame'>add or remove product request </a></li><br>";
+ var POSRQ = "<li><a href='placeOnSale.php' target='ActionFrame'>place on sale request </a></li><br>";
+ var UDPRQ = "<li><a href='updateDeliveryPerson.php' target='ActionFrame'>update delivery person request </a></li><br>";
  var CRPQ = "<li><a href='http://www.google.com' target='ActionFrame'>create report request <b>X</b></a></li><br>";
  var RCRQ = "<li><a href='http://www.google.com' target='ActionFrame'>register customer request <b>X</b></a></li><br>";
  var UCPRQ = "<li><a href='http://www.google.com' target='ActionFrame'>update customer profile request <b>X</b></a></li><br>";

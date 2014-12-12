@@ -18,7 +18,7 @@
    }else{
     $dayStore = $_POST["day"];
     $hourStore = $_POST["hour"];
-   // echo "day entered is $dayStore";
+    echo "<br>day entered is $dayStore" . "hour entered is $hourStore <br>";
     if(intval($dayStore) == 0 && intval($hourStore) == 0){
         echo "<br> Please enter how many days and/or how many hours.";
     }else{
