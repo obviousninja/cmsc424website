@@ -88,7 +88,7 @@
 					    	echo "Found transID: " . $transID . "<br>";
 					    }
 
-					    $sqlBill = "INSERT INTO $database.bill VALUES (NULL, $transID, $totalitemcost, $costwithtax, $deliverycharge, NULL, 0)";
+					    $sqlBill = "INSERT INTO $database.bill VALUES (NULL, $transID, $totalitemcost, $costwithtax, $deliverycharge, NULL, 1)";
 					    $resultBill = mysqli_query($conn, $sqlBill);
 
 					    if (!$resultBill) {
@@ -232,6 +232,8 @@
 						    			} else {
 						    				echo "No products found to update?!<br>";
 						    			}
+
+						    			header('Location: transactionhistory.html?customerid=' . $cid . '&startdate=&enddate=');
 
 						    		} else {
 						    			echo "Currentbasket update failed!<br>";

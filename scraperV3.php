@@ -1449,7 +1449,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
        $result = $conn->query($sqlcommand);
        if($result->num_rows > 0){
         //exist
-        echo "person exist yikes";
+        //echo "person exist yikes";
         //updating the delivery person
         $sqlcommand = "update deliveryperson set name= '$name', address= '$address', workstart= '$ws', workend='$we', salary= '$salary', curlocation= '$curlocation', curroute= '$curroute' where dpid = '$did'";
       //execute
@@ -1756,6 +1756,34 @@ echo $date->format('Y-m-d H:i:s') . "\n";
             die("Connection failed: " . $conn->connect_error);
         }
 
+        $curTime = date("Y-m-d H:i:s");
+         //bonus person with valid email
+        $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status, currentbasket)
+            values ( 'Jing', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'Hornbake Library, College Park, MD 20742', '4442225555', 'infinityarc@gmail.com', 'delinq', '1');";
+        $sqlA = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values (LAST_INSERT_ID(), 1, 'daily' ,'$curTime')";
+
+        $sql1 = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status, currentbasket)
+            values ( 'Joel', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '4310 Knox Road, College Park, MD 20740', '4442225555', 'jsamel@terpmail.umd.edu', 'delinq', '2' );";
+        $sqlB = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values (LAST_INSERT_ID(), 1, 'daily' ,'$curTime')";
+        
+        if ($conn->query($sql) === TRUE) {
+           echo "customer jing created successfully";
+           $conn->query($sqlA);
+        } else {
+               echo "Error creating customer: " . $conn->error;
+        }
+        if ($conn->query($sql1) === TRUE) {
+               echo "customer joel created successfully";
+               $conn->query($sqlB);
+        } else {
+               echo "Error creating customer: " . $conn->error;
+        }
+        
+        
+     
+     
+     //end of bonu person with email
+
           /* if ($conn->query($createTestTable) === TRUE) {
       echo "Table MyGuests created successfully";
     }
@@ -1770,8 +1798,9 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         for($x=0; $x<$count; $x++ ){
             $name = "person" . $x;
+            $emailz = "person" . $x . "@gmail.com";
             $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
-            values ( '$name', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'crazyPerson@gmail.com', 'ontime' )";
+            values ( '$name', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'LaPlata Hall, College Park, MD 20742', '4442225555', '$emailz', 'ontime' )";
             //echo "<br>" . $sql;
         
      if ($conn->query($sql) === TRUE) {
@@ -1781,22 +1810,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
      }  
             
         }
-        //bonus person with valid email
-        $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
-            values ( 'Jing', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'infinityarc@gmail.com', 'delinq' )";
-        $sql1 = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
-            values ( 'Joel', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '100 madmoney road', '4442225555', 'jsamel@terpmail.umd.edu', 'delinq' )";
-        
-        if ($conn->query($sql) === TRUE) {
-           echo "customer jing created successfully";
-     } else {
-           echo "Error creating customer: " . $conn->error;
-     }
-     if ($conn->query($sql1) === TRUE) {
-           echo "customer joel created successfully";
-     } else {
-           echo "Error creating customer: " . $conn->error;
-     }  
+
         $sql = "insert into administrator (name, password, address, phonenumber, email) values ('jing', '111', 'wailing cavern', '1112223333', 'infinityarc@gmail.com')";
          if ($conn->query($sql) === TRUE) {
            echo "administrator jing created successfully";
@@ -1860,7 +1874,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
              $customerNum = rand(1, 50);
             $curTime = date("Y-m-d H:i:s");
             echo "customernum is: " . $customerNum . " curTime " . $curTime;
-            $sql = "insert into basket (customerid, standingordertype, basketdate) values ('$customerNum', 'daily' ,'$curTime')";        
+            $sql = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values ('$customerNum', '1', 'daily' ,'$curTime')";        
            
                 if ($conn->query($sql) === TRUE) {
                echo "Basket $i generated successfully";
@@ -1887,15 +1901,138 @@ echo $date->format('Y-m-d H:i:s') . "\n";
 } else {
     echo "Error updating record: " . $conn->error;
 }*/
-          $sql = "update customer set currentbasket= '$maxBasketid' where customerid='$customerNum'";
-          if ($conn->query($sql) === TRUE) {
-    echo "Customer record updated successfully";
-} else {
-    echo "Error updating record: " . $conn->error;
-}
+        $sql = "update customer set currentbasket= '$maxBasketid' where customerid='$customerNum'";
+        if ($conn->query($sql) === TRUE) {
+            echo "Customer record updated successfully";
+        } else {
+            echo "Error updating record: " . $conn->error;
+        }
+
+        generateBaskeItems($conn);
+
+        //calculate costs, etc.
+        $sql = "SELECT * FROM basket b, basketitem bi, product p, customer c WHERE c.customerid = $customerNum AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
+        $result = mysqli_query($conn, $sql);
+        
+        $totalPrice = 0;
+        $priceWithTax = 0;
+        $tax = 0;
+        $deliveryCost = 0;
+        $isCheck = false;
+        $custAddress = "";
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            // output data of each row
+            while($row = mysqli_fetch_assoc($result)) {
+                //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
+                $tempPrice = 0;
+                if ($row["isonsale"]) {
+                    $tempPrice = $row["saleprice"] * $row["productquantity"];
+                } else {
+                    $tempPrice = $row["price"] * $row["productquantity"];
+                }
+                $totalPrice = $totalPrice + $tempPrice;
+
+                if ($row["taxable"]) {
+                    $tax = $tax + ($tempPrice * 0.06);
+                    $priceWithTax = $priceWithTax + ($tempPrice * 1.06);
+                } else {
+                    $priceWithTax = $priceWithTax + $tempPrice;
+                }
+
+                if ($row["paymentflag"]) {
+                    $isCheck = true;
+                }
+                $custAddress = $row["address"];
+                $_SESSION["basketid"] = $row["basketid"];
+            }
+
+            
+
+            /* FIND DELIVERY TIME AND DISTANCE */
+            $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
+            $url = $url . 'destinations=' . urlencode($custAddress);
+            //echo "URL: " . $url . "<br>";
+            $data = file_get_contents($url);
+
+            if(!$data) echo "FAILED DISTANCE!!!!<br>";
+            //echo $data . "<br>";
+
+            $data = json_decode($data);
+            
+            $time = 0;
+            $distance = 0;
+            foreach($data->rows[0]->elements as $road) {
+                $time += $road->duration->value;
+                $distance += $road->distance->value;
+            }
+
+            $drivingDistMeters = $distance;
+            echo "Driving distance: " . $drivingDistMeters . "<br>";
+            $drivingDistMiles = $drivingDistMeters/1000 * 0.621371;
+            echo "Driving distance in miles: " . $drivingDistMiles . "<br>";
+
+            $sqlDist = "SELECT price FROM deliverypricing WHERE $drivingDistMiles >= rangestart AND $drivingDistMiles < rangeend";
+            $resultDist = mysqli_query($conn, $sqlDist);
+
+            if ($resultDist && mysqli_num_rows($resultDist) > 0) {
+                $price = 0;
+                // output data of each row
+                while($row = mysqli_fetch_assoc($resultDist)) {
+                    $price = $row["price"];
+
+                }
+                $totaltransactioncost = $priceWithTax + $price;
+                $date = date("Y-m-d H:i:s", time());
+                $timeofarrival = date("Y-m-d H:i:s", time() + $time);
+
+                $sqlTrans = "INSERT INTO transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
+                $resultTrans = mysqli_query($conn, $sqlTrans);
+
+                if ($resultTrans) {
+                    echo "Transaction inserted<br>";
+
+                    $sqlBill = "INSERT INTO bill VALUES (NULL, LAST_INSERT_ID(), $totalPrice, $priceWithTax, $price, NULL, 1)";
+                    $resultBill = mysqli_query($conn, $sqlBill);
+
+                    if (!$resultBill) {
+                        echo "Insertion of bill failed!<br>";
+                    } else {
+                        echo "Bill insertion success!<br>";
+
+                        $sqlDispatch = "INSERT INTO dispatchticket VALUES ((SELECT transactionid FROM transaction WHERE basketid = $maxBasketid), $customerNum, $maxBasketid, NULL, (SELECT address FROM customer WHERE customerid = $customerNum), '$date')";
+                        $resultDispatch = mysqli_query($conn, $sqlDispatch);
+
+                        if (!$resultDispatch) {
+                            echo "Dispatch ticket creation failed!<br>";
+                        } else {
+                            echo "Dispatch ticket creation success!<br>";
+                        }
+                    }
+                } else {
+                    echo "FAILED transaction<br>";
+                }
+
+            } else {
+                echo "Error getting distance<br>";
+            }
+        } else {
+            echo "Error getting basket/customer/product info<br>";
+        }
+
+        /*if($result1->num_rows >0){
+            while($newRow = $result1->fetch_assoc()){
+
+            }
+        } else {
+            
+        }*/
+
+
+        //$sql = "INSERT INTO $database.transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
            
            
-            generateBaskeItems($conn);
+            
             
             ob_flush();
             flush();
@@ -2005,7 +2142,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 
                 //if the current date is greater than the sumdate, then the onsale item needs to be reverted
                 if($startDate > $resultDate ){
-                    echo "<br>##current date is greater than the resultdate, thus reverting";
+                    echo "<br>##onsale expired, thus reverting";
                     
                     
                     $sql = "update product set isonsale= '0' where productid = '$pid'";
@@ -2017,7 +2154,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                     
                     
                 }else{
-                    echo "<br>##there are still times";
+                    echo "<br>##Still sometime left before this product is reverted back";
                 }
                 
             }
@@ -2031,21 +2168,22 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         header( 'Content-type: text/html; charset=utf-8' );
         //main
-     //   createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
+        /**/createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
         createTables();    //temporarily offline  THIS IS THE RIGHT CODE
-        //generate Customer  
+ 
         generateCustomer(50); //temporarily offline THIS IS THE RIGHT CODE
-        //generate Deliver Guy
-    generateDeliveryGuy(50); //temporarily offline THIS IS THE RIGHT CODE
-        //generate basket
-      generateBasket();  //this generates basket and basket items
+        
+        generateDeliveryGuy(50); //temporarily offline THIS IS THE RIGHT CODE
+
+        scrapeMasterMarkK();  //temporarily offline until other database items are generated  THIS IS THE RIGHT CODE
+        
+        generateBasket();  //this generates basket and basket items
       
     
         
         
         
-        //populate database
-       //scrapeMasterMarkK();  //temporarily offline until other database items are generated  THIS IS THE RIGHT CODE
+
     }
     
     //estabConnect(); //start the scraper

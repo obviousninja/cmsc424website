@@ -230,54 +230,53 @@
 		//include 'scraper.php';
 	?>
 
-	<div class="mainScreen">
-			
-			<script type="text/javascript">
-				makeCategoryListLogin();
-			</script> 
-		</div>
+
 
 	
 		
 
-		<?php
-			require_once "scraperV3.php";
+	<?php
+		require_once "scraperV3.php";
 
-			$servername = "localhost";
-			$username = "jchen127";
-	        $password = "KbZFqBcZCy29b3Lx";
-	        $database = "myDB";
-			// Create connection
-			$conn = mysqli_connect($servername, $username, $password);
+		$servername = "localhost";
+		$username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $database = "myDB";
+		// Create connection
+		$conn = mysqli_connect($servername, $username, $password);
 
-			// Check connection
-			if (!$conn) {
-			    die("Connection failed: " . mysqli_connect_error());
-			} 
+		// Check connection
+		if (!$conn) {
+		    die("Connection failed: " . mysqli_connect_error());
+		} 
 
-			$spid = suggestProduct($_SESSION['cid']);
-			//echo "SUGGESTED PRODUCT ID: " . $spid;
+		$spid = suggestProduct($_SESSION['cid']);
+		//echo "SUGGESTED PRODUCT ID: " . $spid;
 
-			$sql = "SELECT * FROM $database.product WHERE productid = $spid";
-			$result = mysqli_query($conn, $sql);
+		$sql = "SELECT * FROM $database.product WHERE productid = $spid";
+		$result = mysqli_query($conn, $sql);
 
-			if ($result && mysqli_num_rows($result) > 0) {
-				while ($row = mysqli_fetch_assoc($result)) {
-					echo "<div id='suggestedproduct' align='center' style='border: 3px solid #F56991; background-color: #EFFAB4'><p><b>Check Out This Suggested Product For You!</b></p>";
-					echo "<p>" . $row["productname"] . "</p><img src='" . $row["imageurl"] . "' name='picture' alt='Suggested Product' style='width:100px;height:100px'>";
-					echo "</div>";
-				}
-			} else {
-				echo "Failed to find product!<br>";
+		if ($result && mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				echo "<div id='suggestedproduct' align='center' style='border: 3px solid #F56991; background-color: #EFFAB4'><p><b>Check Out This Suggested Product For You!</b></p>";
+				echo "<p>" . $row["productname"] . "</p><img src='" . $row["imageurl"] . "' name='picture' alt='Suggested Product' style='width:100px;height:100px'>";
+				echo "</div>";
 			}
-		?>
+		} else {
+			//echo "Failed to find product!<br>";
+		}
+	?>
 
-		<div style="background-color:#FF9F80">
-		    <?php include 'footer.php'; ?>
-		</div>
-	
+	<div class="mainScreen">
+		
+		<script type="text/javascript">
+			makeCategoryListLogin();
+		</script> 
+	</div>
 
-	
+	<div style="background-color:#FF9F80">
+	    <?php include 'footer.php'; ?>
+	</div>
 
 	
 </body>

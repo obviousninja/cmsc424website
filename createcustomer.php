@@ -1,3 +1,4 @@
+<body bgcolor="#D1F2A5">
 <?php
 	function getDrivingDistance($address) {
 	    $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
@@ -41,7 +42,7 @@
 	$email = $_POST["email"];
 	$password = $_POST["password"];
 	$address = $_POST["address"] . ", " . $_POST["city"] . ", " . $_POST["state"] . " " . $_POST["zipcode"];
-	$state = "active";
+	$state = "act";
 	$status = "ontime";
 	$sex = $_POST["sex"];
 	$paymentflag = false;
@@ -159,3 +160,4 @@
 
 
 ?>
+</body>
