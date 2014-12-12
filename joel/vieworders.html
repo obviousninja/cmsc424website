@@ -102,7 +102,7 @@
 						    
 
 						} else {
-							echo "Basket item cost query failed!<br>";
+							//echo "Basket item cost query failed!<br>";
 						}
 				        
 				    }
@@ -125,7 +125,7 @@
 
 		            var listElement = document.createElement("div");
 		            listElement.setAttribute("id", item["transactionid"]);
-		            listElement.setAttribute("style", "border: 1px solid black; margin:15px 15px 0px 15px; backgroundColor:#FFFFFF");
+		            listElement.setAttribute("style", "border: 1px solid black; margin:15px 15px 0px 15px; background-color:#FFFFFF");
 
 		            listContainer.appendChild(listElement);
 
@@ -234,7 +234,7 @@
 	<body bgcolor="#D1F2A5">
 		<?php 
 			$cid = $_GET["customerid"];
-			echo "Get CID: " . $cid . "<br>";
+			//echo "Get CID: " . $cid . "<br>";
 			$_SESSION["cid"] = $_GET["customerid"];
 			$_SESSION["searchtext"] = "";
 

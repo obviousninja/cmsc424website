@@ -1,8 +1,8 @@
-<html>
-	<head><title>Nom.com</title></head>
-	<body>
-		<a href="index.html"><img src="logo.png" name="logo" alt="Logo" style="width:530px;height:140px" align="center"></a>
-		<br><br>
+<div style="background-color: #FFC48C">
+	<a href="loggedinhome.html?customerid=<?php echo $_SESSION['cid'] ?>" style="text-decoration:none; text-shadow: 3px 3px 3px #000000">
+		<!--<p align="center"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></p>-->
+		<p align="center"><b><font face="Verdana" size="140" color="#FC7403">Nom.com</font></b></p>
+	</a>
 
 		<form action="productsearch.html" method="get">
 			<input type="text" name="searchtext" value='<?php echo $_SESSION['searchtext']; ?>'>
@@ -15,4 +15,4 @@
 
 		<hr>
 
-	</body>
+</div>

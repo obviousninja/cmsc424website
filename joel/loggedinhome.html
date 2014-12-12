@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Nom.com</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="loginpage.js" type="text/javascript"></script>
     <script type="text/javascript">
     	var counter = 0;
 
@@ -113,6 +115,9 @@
             // Make a container element for the list - which is a <div>
             // You don't actually need this container to make it work
             var listContainer = document.createElement("div"); 
+            listContainer.setAttribute("id", "listContainer");
+            listContainer.setAttribute("style", "background-color:#FFFFFF");
+            listContainer.innerHTML += "<h3>Product Categories:</h3>";
 
             // Make the list itself which is a <ul>
             var listElement = document.createElement("ul");
@@ -215,41 +220,66 @@
 </head>
 <body bgcolor="#D1F2A5">
 	<?php 
-		$servername = "localhost";
-		$username = "jchen127";
-        $password = "KbZFqBcZCy29b3Lx";
-        $database = "myDB";
-		// Create connection
-		$conn = mysqli_connect($servername, $username, $password);
-
-		// Check connection
-		if (!$conn) {
-		    die("Connection failed: " . mysqli_connect_error());
-		} 
-
 		$cid = $_GET["customerid"];
-		echo "CUSTOMER ID: " . $cid;
+		//echo "CUSTOMER ID: " . $cid;
 		$_SESSION['cid']   = $cid;
-		echo "CUSTOMER ID in SESSION: " . $_SESSION['cid'];
+		//echo "CUSTOMER ID in SESSION: " . $_SESSION['cid'];
 		$_SESSION["searchtext"] = "";
 
 		include 'loggedinheader.php';
 		//include 'scraper.php';
 	?>
 
-	<div class="divContainer">
-		<div class="mainScreen" style="color:#0000FF">
-			<h3>Product Categories:</h3>
+	<div class="mainScreen">
+			
 			<script type="text/javascript">
 				makeCategoryListLogin();
 			</script> 
 		</div>
 
-		<div style="clear: both;" class="clear"></div>
-	</div>
+	
+		
 
+		<?php
+			require_once "scraperV3.php";
 
-    <?php include 'footer.php'; ?>
+			$servername = "localhost";
+			$username = "jchen127";
+	        $password = "KbZFqBcZCy29b3Lx";
+	        $database = "myDB";
+			// Create connection
+			$conn = mysqli_connect($servername, $username, $password);
+
+			// Check connection
+			if (!$conn) {
+			    die("Connection failed: " . mysqli_connect_error());
+			} 
+
+			$spid = suggestProduct($_SESSION['cid']);
+			//echo "SUGGESTED PRODUCT ID: " . $spid;
+
+			$sql = "SELECT * FROM $database.product WHERE productid = $spid";
+			$result = mysqli_query($conn, $sql);
+
+			if ($result && mysqli_num_rows($result) > 0) {
+				while ($row = mysqli_fetch_assoc($result)) {
+					echo "<div id='suggestedproduct' align='center' style='border: 3px solid #F56991; background-color: #EFFAB4'><p><b>Check Out This Suggested Product For You!</b></p>";
+					echo "<p>" . $row["productname"] . "</p><img src='" . $row["imageurl"] . "' name='picture' alt='Suggested Product' style='width:100px;height:100px'>";
+					echo "</div>";
+				}
+			} else {
+				echo "Failed to find product!<br>";
+			}
+		?>
+
+		<div style="background-color:#FF9F80">
+		    <?php include 'footer.php'; ?>
+		</div>
+	
+
+	
+
+	
 </body>
 </html>
 

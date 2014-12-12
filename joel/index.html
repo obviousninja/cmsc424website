@@ -117,6 +117,8 @@
             // Make a container element for the list - which is a <div>
             // You don't actually need this container to make it work
             var listContainer = document.createElement("div"); 
+            listContainer.setAttribute("style", "background-color:#FFFFFF");
+            listContainer.innerHTML += "<h3>Product Categories:</h3>";
 
             // Make the list itself which is a <ul>
             var listElement = document.createElement("ul");
@@ -251,7 +253,6 @@
 
 
 	<div id="mainScreen" style="backgroundColor:#000000">
-		<h3>Product Categories:</h3>
 		<script type="text/javascript">
 			makeCategoryList();
 		</script> 
@@ -285,8 +286,9 @@
 	
 	
 
-
-    <?php include 'footer.php'; ?>
+	<div style="background-color:#FF9F80">
+    	<?php include 'footer.php'; ?>
+    </div>
 </body>
 </html>
 
