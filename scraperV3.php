@@ -1954,7 +1954,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 
         $conn->close();
     }
-        function generateBasket(){
+    function generateBasket(){
          date_default_timezone_set('America/New_York');
          set_time_limit(0);
            $servername = "localhost";
@@ -2119,17 +2119,11 @@ echo $date->format('Y-m-d H:i:s') . "\n";
             echo "Error getting basket/customer/product info<br>";
         }
 
-        /*if($result1->num_rows >0){
-            while($newRow = $result1->fetch_assoc()){
 
-            }
-        } else {
-            
-        }*/
 
 
         //$sql = "INSERT INTO $database.transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
-           
+        assignDeliveryPeople();   
            
             
             
@@ -2141,7 +2135,9 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         $conn->close();
     }
-        function generateBaskeItems($conn){
+    
+
+    function generateBaskeItems($conn){
            
         
         //get current count of products
@@ -2195,6 +2191,23 @@ echo $date->format('Y-m-d H:i:s') . "\n";
           
         
     }
+
+
+    function assignDeliveryPeople() {
+        $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        
+    }
+
+
     
     //if we assume administrator put 1-7 items on sale every week on time, then there will be no need for timer
     function revertItSeven(){
