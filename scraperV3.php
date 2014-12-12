@@ -1297,40 +1297,139 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         $conn->close();
     }
-    //takes 2 params, productid and what to do. add or remove
-    function addRemoveProduct($pid, $what){
+     function addRemoveProduct($pid, $what){
+
         //find out if a customer if deactivated, if so, reactivate or vice versa
+
            $servername = "localhost";
+
         $username = "jchen127";
+
         $password = "KbZFqBcZCy29b3Lx";
+
         $dbname = "mydb";
+
         $conn = new mysqli($servername, $username, $password, $dbname);
+
         // Check connection
+
         if ($conn->connect_error) {
+
             die("Connection failed: " . $conn->connect_error);
+
         }
+
         
+
         //  $sql = "DELETE FROM MyGuests WHERE id=3";
+
         if(strcasecmp($what, 'add') == 0){
+
             //open a new webpage that allows adding products
-            
-            echo "<script language='javascript'> window.open('addProduct.php','_blank') </script>";       
-            
-        }else if(strcasecmp($what, 'remove') == 0){
-            //remove the product from the database
-            $sql = "delete from product where productid='$pid'";
-            if ($conn->query($sql) === TRUE) {
-    echo "Record deleted successfully";
-} else {
-    echo "Error deleting record: " . $conn->error;
-}
 
             
+
+            echo "<script language='javascript'> window.open('addProduct.php','_blank') </script>";       
+
+            
+
+        }else if(strcasecmp($what, 'remove') == 0){
+
+            //remove the product from the database
+
+            $sql = "delete from product where productid='$pid'";
+
+            if ($conn->query($sql) === TRUE) {
+
+    echo "Record deleted successfully";
+
+} else {
+
+    echo "Error deleting record: " . $conn->error;
+
+}
+
+
+
+            
+
+        }else if(strcasecmp($what, 'modify') == 0){
+            echo "<script language='javascript'> window.open('modifyProduct.php','_blank') </script>";
         }
+    
         
+
         $conn->close();
+
         
+
     }
+     function modifyProduct( $productid, $productName, $imageurl, $price, $cid, $salestate , $saleprice, $taxable){
+
+               $servername = "localhost";
+
+        $username = "jchen127";
+
+        $password = "KbZFqBcZCy29b3Lx";
+
+        $dbname = "mydb";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+
+        if ($conn->connect_error) {
+
+            die("Connection failed: " . $conn->connect_error);
+
+        }
+        /*
+                 $updatecommand = "update product set soldcount= '$newCount' where productid = '$pid'";
+
+            if ($conn->query($updatecommand) === TRUE) {
+
+    echo "Record updated successfully";
+
+} else {
+
+    echo "Error updating record: " . $conn->error;
+
+}
+         */
+        $conproductid = intval($productid);
+         
+         $conprice = floatval($price);
+
+         $concid = intval($cid);
+
+         $consaleprice = floatval($saleprice);
+
+
+
+         
+
+      //  $sql = "insert into product (productname, imageurl, price, categoryid, isonsale, saleprice, taxable) values ('$productName', '$imageurl', '$conprice', '$concid', '$salestate' , '$consaleprice', '$taxable')";
+        $sql = "update product set productname='$productName', imageurl='$imageurl', price='$conprice', categoryid='$cid', isonsale='$salestate', saleprice='$saleprice', taxable='$taxable' where productid='$conproductid'";
+        
+     if ($conn->query($sql) === TRUE) {
+
+      echo "updated product table successfully";
+
+    } else {
+
+      echo "Error updating into table: " . $conn->error;
+
+    }   
+
+        
+
+        
+
+        $conn->close();
+
+    
+
+   }
     //must make sure the cid agrees with the product categoryid from the productcategory table
     function addProduct( $productName, $imageurl, $price, $cid, $salestate , $saleprice, $taxable){
                $servername = "localhost";
