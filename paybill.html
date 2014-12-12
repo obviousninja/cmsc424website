@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pay Bill</title>
+</head>
+<body bgcolor="#D1F2A5">
+	<?php
+		$cid = $_GET["customerid"];
+		//echo "Get CID: " . $cid . "<br>";
+		$_SESSION["cid"] = $_GET["customerid"];
+		$_SESSION["searchtext"] = "";
+
+		include 'loggedinheader.php';
+
+		$servername = "localhost";
+		$username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $database = "myDB";
+		// Create connection
+		$conn = mysqli_connect($servername, $username, $password);
+
+		// Check connection
+		if (!$conn) {
+		    die("Connection failed: " . mysqli_connect_error());
+		}
+
+		$transactionid = $_GET["transactionid"];
+
+		$sql = "SELECT * FROM $database.transaction t, $database.bill b, $database.customer c WHERE t.transactionid = $transactionid AND b.transactionid = $transactionid AND t.customerid = c.customerid";
+		$result = mysqli_query($conn, $sql);
+
+		//$returnStr = "[";
+		$totalPrice = 0;
+		$priceWithTax = 0;
+		$tax = 0;
+		$deliveryCost = 0;
+		$isCheck = false;
+		$custAddress = "";
+		//$basketid = -1;
+
+		if ($result && mysqli_num_rows($result) > 0) {
+		    // output data of each row
+		    while($row = mysqli_fetch_assoc($result)) {
+		        echo "<fieldset>";
+				echo "<legend>Bill Information</legend>";
+		    	echo "<form action='paybill.php' method='post'>";
+		    	echo "Time of Order: " . $row["ordertime"] . "<br><br>";
+
+		    	echo "<p>Items Purchased:</p><br>";
+		    	/* Display all items from bill: id, name, price, quantity */
+		    	$sqlGetBaskets = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p WHERE b.basketid = (SELECT basketid FROM $database.transaction WHERE transactionid = $transactionid) AND b.basketid = bi.basketid AND bi.productid = p.productid";
+		    	$resultGetBaskets = mysqli_query($conn, $sqlGetBaskets);
+
+		    	if ($resultGetBaskets && mysqli_num_rows($resultGetBaskets) > 0) {
+		    		while($row2 = mysqli_fetch_assoc($resultGetBaskets)) {
+		    			echo $row2["productid"] . ": " . $row2["productname"] . "\t";
+		    			if ($row2["isonsale"]) {
+		    				echo $row2["saleprice"] . "\t";
+		    			} else {
+		    				echo $row2["price"] . "\t";
+		    			}
+		    			echo "Quantity: " . $row2["productquantity"] . "<br>";
+		    		}
+		    	} else {
+		    		echo "GETTING BASKET ITEMS FAILED!<br><br>";
+		    	}
+		    	echo "<br>";
+
+		    	echo "Total Item Cost: $" . money_format('%i', $row["totalitemcost"]) . "<br>";
+		    	echo "Cost With Tax: $" . money_format('%i', $row["costwithtax"]) . "<br>";
+		    	echo "Delivery Charge: $" . money_format('%i', $row["deliverycharge"]) . "<br>";
+		    	echo "Transaction Total: $" . money_format('%i', $row["transactiontotal"]) . "<br>";
+		    	echo "Tip: <input type='number' name='tip'><br><br>";
+		    	
+		    	if ($row["paymentflag"]) {
+			    	echo "<div>Check Information<br>";
+			    	echo "Bank Account Number: <input type=\"number\" name=\"bankaccountnumber\"><br>";
+			    	echo "Routing Number: <input type=\"number\" name=\"bankroutingnumber\"><br>";
+			    	echo "Credit Card Number: <input type=\"number\" name=\"creditcardnumber\" value=" . $row["creditcardnumber"] . " style=\"display:none\">";
+			    	echo "Expiration Date: <input type=\"date\" name=\"ccexpiration\" value=" . $row["ccexpiration"] . " style=\"display:none\">";
+			    	echo "</div>";
+			    } else {
+			    	echo "<div>Credit Card Information<br>";
+			    	echo "<input type=\"number\" name=\"bankaccountnumber\" style=\"display:none\">";
+			    	echo "<input type=\"number\" name=\"bankroutingnumber\" style=\"display:none\">";
+			    	echo "Credit Card Number: <input type=\"number\" name=\"creditcardnumber\" value=" . $row["creditcardnumber"] . "><br>";
+			    	echo "Expiration Date: <input type=\"date\" name=\"ccexpiration\" value=" . $row["ccexpiration"] . "><br>";
+			    	echo "</div>";
+			    }
+
+		    	
+		    	echo "<input type='number' name='customerid' value=" . $cid . " style='display:none'><br>";
+		    	echo "<input type='number' name='transactionid' value=" . $row["transactionid"] . " style='display:none'>";
+		    	echo "<input type='number' name='transactiontotal' value=" . $row["transactiontotal"] . " style='display:none'>";
+		    	echo "<input type='submit' value='Submit Payment'>";
+		    	echo "</form>";
+		    	echo "</fieldset>";
+		    }
+
+
+		} else {
+		    echo "0 results for finding cart!<br>";
+		}
+
+		mysqli_close($conn);
+	?>
+
+
+	<script type="text/javascript" language="JavaScript"><!--
+		function HideContent(d) {
+			document.getElementById(d).style.display = "none";
+		}
+		function ShowContent(d) {
+			document.getElementById(d).style.display = "block";
+		}
+		function ReverseDisplay(d) {
+			if(document.getElementById(d).style.display == "none") { 
+				document.getElementById(d).style.display = "block"; 
+			} else { 
+				document.getElementById(d).style.display = "none"; 
+			}
+		}
+	//--></script>
+
+</body>
+
+

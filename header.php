@@ -1,37 +1,18 @@
-<html>
-	<head><title>Nom.com</title></head>
-	<body>
-		<a href="index.html"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></a>
-		<br><br>
+<div style="background-color: #FFC48C">
+	<a href="loggedinhome.html?customerid=<?php echo $_SESSION['cid'] ?>" style="text-decoration:none; text-shadow: 3px 3px 3px #000000">
+		<!--<p align="center"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></p>-->
+		<p align="center"><b><font face="Verdana" size="140" color="#FC7403">Nom.com</font></b></p>
+	</a>
 
-		<a href="productsearch.html">Search Products</a>
 		<form action="productsearch.html" method="get">
-			<input type="text" name="searchtext">
+			<input type="text" name="searchtext" value='<?php echo $_SESSION['searchtext']; ?>'>
+			<input type='number' name='minprice' style='display:none'>   
+			<input type='number' name='maxprice' style='display:none'>   
+			<input type='hidden' name='saleonly' value='0' style='display:none'>
+			<input type='checkbox' name='saleonly' value='1' style='display:none'>
+			<input type="submit" value="Search Products">
 		</form>
 
-		<script src="jquery-2.1.1.js">
-			$( document ).ready(function() {
-	 
-			    $( "a" ).click(function( event ) {
-			 
-			        alert( "As you can see, the link no longer took you to jquery.com" );
-        			event.preventDefault();
-			 
-			    });
-	 
-			});
-		</script>
-
-<!--
-		<a href="https://google.com/">View Orders</a>
-		<a href="https://google.com/">Transaction History</a>
-		<div class="header">
-		Logo, navigation, et cetera goes in here
-		</div>
--->
 		<hr>
 
-	<?php
-	    
-
-	?>
+</div>

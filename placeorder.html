@@ -1,0 +1,255 @@
+<html>
+	<head>
+		<title>Nom.com</title>
+	</head>
+	<body bgcolor="#D1F2A5">
+		<?php 
+			require_once "Mail.php";
+
+			$cid = $_POST["customerid"];
+			//echo "Get CID: " . $cid . "<br>";
+			$_SESSION["cid"] = $_POST["customerid"];
+			$_SESSION["searchtext"] = "";
+
+			include 'loggedinheader.php';
+
+
+			$servername = "localhost";
+			$username = "jchen127";
+	        $password = "KbZFqBcZCy29b3Lx";
+	        $database = "myDB";
+			// Create connection
+			$conn = mysqli_connect($servername, $username, $password);
+
+			// Check connection
+			if (!$conn) {
+			    die("Connection failed: " . mysqli_connect_error());
+			}
+
+
+			$cid = $_POST["customerid"];
+			$bid = $_POST["basketid"];
+			$totalitemcost = $_POST["totalitemcost"];
+			$costwithtax = $_POST["costwithtax"];
+			$deliverycharge = $_POST["deliverycharge"];
+			$tripduration = $_POST["tripduration"];
+			$bankaccountnumber = $_POST["bankaccountnumber"];
+			$bankroutingnumber = $_POST["bankroutingnumber"];
+			$standingordertype = $_POST["standingordertype"];
+			echo "Standing Order Type: " . $standingordertype . "<br>";
+
+			$totaltransactioncost = $costwithtax + $deliverycharge;
+
+			$date = date('Y-m-d H:i:s', time());
+			echo "DATE: " . $date . "<br>";
+			echo "DURATION: " . $tripduration . "<br>";
+			$timeofarrival = date("Y-m-d H:i:s", time() + $tripduration);
+			echo "Estimated Time of Delivery: " . $timeofarrival . "<br>";
+
+
+
+			$sql = "UPDATE $database.customer SET bankaccountnumber = '$bankaccountnumber', bankroutingnumber = '$bankroutingnumber' WHERE customerid = $cid";
+			$result = mysqli_query($conn, $sql);
+
+			/* Make bill */
+			if (!$result) {
+				echo "Update of customer failed!<br>";
+			} else {
+			    echo "Customer update success!<br>";
+
+			    if ($standingordertype != "None") {
+			    	echo "IsStandingOrder is true<br>";
+			    	$sqlStanding = "UPDATE $database.basket SET isstandingorder = 1, standingordertype = '$standingordertype' WHERE basketid = $bid";
+			    	$resultStanding = mysqli_query($conn, $sqlStanding);
+
+			    	if (!$resultStanding) {
+			    		echo "Update of basket to standing order failed!<br>";
+			    	} else {
+			    		echo "Successfully set basket to standing order!<br>";
+			    	}
+			    }
+
+			    $sqlTrans = "INSERT INTO $database.transaction VALUES (NULL, $bid, $cid, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
+			    $resultTrans = mysqli_query($conn, $sqlTrans);
+
+			    if (!$resultTrans) {
+			    	echo "Insertion of transaction failed!<br>";
+			    } else {
+			    	echo "Transaction insertion success!<br>";
+
+				    $sqlGetTransID = "SELECT transactionid FROM $database.transaction WHERE basketid = $bid";
+				    $resultGetTransID = mysqli_query($conn, $sqlGetTransID);
+
+				    if ($resultGetTransID && mysqli_num_rows($resultGetTransID) > 0) {
+				    	$transID = -1;
+					    // output data of each row
+					    while($row = mysqli_fetch_assoc($resultGetTransID)) {
+					    	$transID = $row["transactionid"];
+					    	echo "Found transID: " . $transID . "<br>";
+					    }
+
+					    $sqlBill = "INSERT INTO $database.bill VALUES (NULL, $transID, $totalitemcost, $costwithtax, $deliverycharge, NULL, 0)";
+					    $resultBill = mysqli_query($conn, $sqlBill);
+
+					    if (!$resultBill) {
+					    	echo "Insertion of bill failed!<br>";
+					    } else {
+					    	echo "Bill insertion success!<br>";
+					    	//echo mysql_info() . "<br>";
+
+					    	$sqlCust = "SELECT name, email, LAST_INSERT_ID() FROM $database.customer WHERE customerid = $cid";
+					    	$resultCust = mysqli_query($conn, $sqlCust);
+					    	$cname = NULL;
+					    	$to = NULL;
+					    	$billid = NULL;
+
+					    	if ($resultCust && mysqli_num_rows($resultCust) > 0) {
+					    		while ($row = mysqli_fetch_assoc($resultCust)) {
+					    			$cname = $row["name"];
+					    			$to = $row["email"];
+					    			$billid = $row["LAST_INSERT_ID()"];
+					    		}
+
+					    		echo $billid . "<br>";
+
+					    		//send email to the customer
+					            $from = 'smallfry9000@yahoo.com';
+					            $subject = "Your Nom.com Billing Statement";
+					            $body = "Hi $cname,\n\nBelow is your billing statement from Nom.com.\n\n";
+
+					            $body = $body . "Items Purchased:\n";
+
+					            $sqlGetItems = "SELECT * FROM $database.basket b, $database.basketitem bi, $database.product p WHERE b.basketid = (SELECT basketid FROM $database.transaction WHERE transactionid = $transID) AND b.basketid = bi.basketid AND bi.productid = p.productid";
+						    	$resultGetItems = mysqli_query($conn, $sqlGetItems);
+
+						    	if ($resultGetItems && mysqli_num_rows($resultGetItems) > 0) {
+						    		while($row2 = mysqli_fetch_assoc($resultGetItems)) {
+						    			//echo $row2["productid"] . ": " . $row2["productname"] . "\t";
+						    			$body = $body . $row2["productid"] . ": " . $row2["productname"] . "\t";
+						    			if ($row2["isonsale"]) {
+						    				//echo $row2["saleprice"] . "\t";
+						    				$body = $body . $row2["saleprice"] . "\t";
+						    			} else {
+						    				//echo $row2["price"] . "\t";
+						    				$body = $body . $row2["price"] . "\t";
+						    			}
+						    			//echo "Quantity: " . $row2["productquantity"] . "<br>";
+						    			$body = $body . "Quantity: " . $row2["productquantity"] . "\n";
+						    		}
+
+						    		$sqlBillInfo = "SELECT * FROM $database.transaction t, $database.bill b, $database.customer c WHERE t.transactionid = $transID AND b.transactionid = $transID AND t.customerid = c.customerid";
+						    		$resultBillInfo = mysqli_query($conn, $sqlBillInfo);
+
+						    		if ($resultBillInfo && mysqli_num_rows($resultBillInfo) > 0) {
+						    			while($row = mysqli_fetch_assoc($resultBillInfo)) {
+						    				$body = $body . "\nTime of Order: " . $row["ordertime"] . "\n\n";
+											
+											$body = $body . "Total Item Cost: $" . money_format('%i', $row["totalitemcost"]) . "\n";
+		    								$body = $body . "Cost With Tax: $" . money_format('%i', $row["costwithtax"]) . "\n";
+									    	$body = $body . "Delivery Charge: $" . money_format('%i', $row["deliverycharge"]) . "\n";
+									    	$body = $body . "Transaction Total: $" . money_format('%i', $row["transactiontotal"]) . "\n";
+									    	//$body = $body . "Tip: <input type='number' name='tip'><br><br>";
+
+						    			}
+
+						    			$headers = array(
+							             	'From' => $from,
+							            	'To' => $to,
+							         		'Subject' => $subject
+							            );
+
+								        $smtp = Mail::factory('smtp', array(
+									        'host' => 'ssl://smtp.mail.yahoo.com',
+									        'port' => '465',
+									        'auth' => true,
+									        'username' => 'smallfry9000@yahoo.com',
+									        'password' => 'insaneAsylum1'
+								    	));
+
+								        $mail = $smtp->send($to, $headers, $body);
+
+								        if (PEAR::isError($mail)) {
+								      		echo('<p>' . $mail->getMessage() . '</p>');
+								        } else {
+								      		echo('<p>Message successfully sent!</p>');
+								        }
+						    		} else {
+						    			echo "Bill info search FAILED!<br>";
+						    		}
+
+						    		
+						    	} else {
+						    		echo "GETTING BASKET ITEMS FAILED!<br><br>";
+						    	}
+						    	echo $body . "\n";
+
+					            
+					    	} else {
+					    		echo "Finding customer info failed; no mailing<br>";
+					    	}
+			                
+			                
+							/* Create dispatch ticket */
+					    	$sqlDispatch = "INSERT INTO $database.dispatchticket VALUES ($transID, $cid, $bid, NULL, (SELECT address FROM $database.customer WHERE customerid = $cid), '$date')";
+					    	$resultDispatch = mysqli_query($conn, $sqlDispatch);
+
+					    	if (!$resultDispatch) {
+					    		echo "Dispatch ticket creation failed!<br>";
+					    	} else {
+					    		echo "Dispatch ticket creation success!<br>";
+					    		/* Update customer balance and set new current basket */
+						    	$sqlBasket = "INSERT INTO $database.basket VALUES (NULL, $cid, 0, NULL, 0, '$date')"; 
+						    	$resultBasket = mysqli_query($conn, $sqlBasket);
+
+						    	if (!$resultBasket) {
+						    		echo "Basket creation failed!<br>";
+						    	} else {
+						    		echo "Basket creation successful!<br>";
+
+						    		$sqlBalance = "UPDATE $database.customer SET currentbasket = LAST_INSERT_ID() WHERE customerid = $cid";
+						    		$resultBalance = mysqli_query($conn, $sqlBalance);
+
+						    		if ($resultBalance) {
+						    			echo "Current basket update successful!<br>";
+
+						    			/* update product count */
+						    			$sqlProduct = "SELECT productid, productquantity FROM $database.basketitem bi WHERE bi.basketid = $bid";
+						    			$resultProduct = mysqli_query($conn, $sqlProduct);
+
+						    			if ($resultProduct && mysqli_num_rows($resultProduct) > 0) {
+						    				while ($row = mysqli_fetch_assoc($resultProduct)) {
+						    					$sqlUpdateCount = "UPDATE $database.product SET soldcount = soldcount + " . $row['productquantity'] . " WHERE productid = " . $row['productid'];
+						    					$resultUpdateCount = mysqli_query($conn, $sqlUpdateCount);
+
+						    					if ($resultUpdateCount) {
+						    						echo "Product " . $row['productid'] . " update successful!<br>";
+						    					} else {
+						    						echo "Product " . $row['productid'] . " update FAILED!<br>";
+						    					}
+						    				}
+
+						    				
+						    			} else {
+						    				echo "No products found to update?!<br>";
+						    			}
+
+						    		} else {
+						    			echo "Currentbasket update failed!<br>";
+						    		}
+						    	}
+
+					    	}
+
+					    }
+					} else {
+						echo "Finding transaction ID failed!<br>";
+					}
+				}
+			}
+
+			mysqli_close($conn);
+		?>
+
+
+	</body>
+</html>
