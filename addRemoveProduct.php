@@ -7,6 +7,7 @@
     <br>
     Action To Take: 
     <input type='radio' name='what' value='add'>Add
+    <input type='radio' name='what' value='modify'>Modify
     <input type='radio' name='what' value='remove' checked>Remove
    
    
