@@ -16,28 +16,9 @@
 	<form id="orderinformation" name= "orderinformation" action="placeorder.html" method="post" align="left">
 		<fieldset>
 		<legend>Order Information</legend>
+		
 		<?php
-			/*function getDrivingDistance($address) {
-			    $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
-			 	$url = $url . 'destinations=' . urlencode($address);
-			 	//echo "URL: " . $url . "<br>";
-			 	$data = file_get_contents($url);
-
-				if(!$data) echo "FAILED!!!!<br>";
-			 	//echo $data . "<br>";
-
-			 	$data = json_decode($data);
-			 	
-			 	$time = 0;
-				$distance = 0;
-				foreach($data->rows[0]->elements as $road) {
-				    $time += $road->duration->value;
-				    $distance += $road->distance->value;
-				}
-				echo "TIME: " . $time . "<br>";
-
-				return $distance;
-			}*/
+			
 
 			function combo($thelist, $theinput) {
 			  $idx = $thelist.selectedIndex;
@@ -184,6 +165,7 @@
 
 			mysqli_close($conn);
 		?>
+		
 		<!--<input type="text" name="customerid" value="<?php echo $_SESSION['cid'];?>">
 		<input type="text" name="basketid" value="<?php echo $_SESSION['basketid'];?>">
 		<input type="text" name="totalitemcost" value="<?php echo $_SESSION['totalitemcost'];?>">

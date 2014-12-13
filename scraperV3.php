@@ -573,10 +573,44 @@
         
         
     }
-    //generates best and worst report
-    function populateBestWorstReport(){
-        //get the current
-     //open connection
+    //going through the categoryids in the grandcategoryname and output the total sold count
+    function validcateidoutput($categoryname ,$conn){
+     // $sql = "select categoryid from productcategory where category = '$grandtype'";
+     $sql = "select categoryid from productcategory where category='$categoryname'";
+     $arr = array();  //this will be the returnable array
+     $result = $conn->query($sql);
+     $counter = 0;
+     if($result->num_rows > 0){
+      while($row = $result->fetch_assoc()){
+       //array_push($arr, $row['categoryid']);
+        //going through every single category id and add their sold count to counter
+
+        $catid = intval($row['categoryid']);
+        $sql = "select soldcount from product where categoryid = '$catid'";
+        $result1 = $conn->query($sql);
+        if($result1->num_rows > 0){
+         while($row1 = $result1->fetch_assoc()){
+        //  echo $row1['soldcount'];
+          $cc = intval($row1['soldcount']);
+          $counter = $counter + $cc; 
+         }
+        }
+        
+      }
+     }else{
+      echo "fatal error no such category name";
+      return -1;
+     }
+     
+     echo " ::soldcount = " . $counter . "]";
+     
+     //return $arr;
+    }
+
+    //this function displays each grandcategory with their respective sold count
+    function grandSoldCountDisplay(){
+     
+      //open connection
            $servername = "localhost";
         $username = "jchen127";
         $password = "KbZFqBcZCy29b3Lx";
@@ -587,89 +621,216 @@
             die("Connection failed: " . $conn->connect_error);
         }
         
-        $curworstnum = 100000; //default is -1 so it can be receptive to every other numbers
-        $worstArray = array();  //array that contains the names of the worst selling item
         
-        $curbestnum = -1;
-        $bestArray = array();
-        $iterStop = 11;
-        $iterNow = 1;
-        //sql command for getting the product id, name and sold count
-        $sqlcommand = "select distinct productid, soldcount, productname from product";
-         $result = $conn->query($sqlcommand);
-          if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-            
-                
-                //echo "<br> pid: ". $row["productid"]. " - soldcount: ". $row["soldcount"] . "<br>";
-                //intval($row["soldcount"]) // sold count, type int
-                //$row['productid']  // type string
-                //$row['productname'] // type string
-                
-               // echo "product name: " . $row['productname'] . " productid: " . $row['productid'] . "sold count: " . $row["soldcount"] . "<br>";
-                $tempVal = $curworstnum;  //store the current worst number
-                    
-                if($curworstnum > intval($row["soldcount"])){
+     //find the grand types
+      $sql= "select distinct category from productcategory";
+      $result = $conn->query($sql);
+      if($result->num_rows > 0){
+       while($row = $result->fetch_assoc()){
+        echo " [" . $row['category'];
+        $cataName = $row['category'];
+        
+        $procArr = validcateidoutput($cataName, $conn);  //array of category id
+        if($procArr == -1){
+          echo "fatal error at grandsoldcountdisplay()";
+        }
+        
+       }
+      }
+     $conn->close();
+    }
+    function correctBestWorstReport($lb, $ub, $grandtype){
+     
+      //open connection
+           $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $dbname = "mydb";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        
+      //echo "<br>lowerbound: " . $lb . "<br>upper bound" . $ub;
+      
+      if($lb > $ub){
+       //lower bound cannot be greater than the upper bound
+       echo "<br>Error. Lower bound cannot be greater than the upper bound";
+       return;
+      }
+      
+      //echo "grandtype is: " . $grandtype;
+      //getting the grandtype, type array
+      $validTypeArray = array(); // this is the array that stores the type that needs to be
+      //another word this is the category id
+      $sql = "select categoryid from productcategory where category = '$grandtype'";
+      $result = $conn->query($sql);
+      if($result->num_rows > 0){
+       while($row = $result->fetch_assoc()){
+         //numeric returns of category ids
+         //echo "cataid:  " . $row['categoryid'];
+         $curid = intval($row['categoryid']);
+         array_push($validTypeArray, $curid);
+         
+       }
+      }
+      echo "<br>";
+      print_r($validTypeArray);
+      
+      //display the grandcategory with their respective total sold count
+      grandSoldCountDisplay($conn); //this might be invalid
+      
+      //retrieve every single basket that is within the date range
+      /*$sql = "";
+      $result = $conn->query($sql);
+      if($result->num_rows > 0){
+       while($row = $result->fetch_assoc()){
+        //echo "cataid:  " . $row['categoryid'];
+       
+       }
+      }*/
+      $bestArray = array();
+      $curbestnum = -1;
+      
+      $worstArray = array();
+      $curworstnum = 100000;
+      
+      $sql = "select basketid from basket where basketdate >= '$lb' and basketdate <= '$ub'";
+      $result = $conn->query($sql);
+      if($result->num_rows > 0){
+       while($row = $result->fetch_assoc()){
+        //echo "<br>basket:  " . $row['basketid'];
+        //find basketitems in one basket
+        $curBid = intval($row['basketid']);
+        $sql = "select basketid, productid, productquantity from basketitem where basketid = '$curBid'";
+        $resultItem = $conn->query($sql);
+        if($result->num_rows > 0){
+         while($rowrow = $resultItem->fetch_assoc()){
+          //echo "<br>basketid is: " . $rowrow['basketid'];
+           //does this product id belong to grandtype's categoryid array?
+           //find categoryid this product id belong to, and check if this item
+           //is in the $validTypeArray, then increase the count otherwise don't
+           $curpid = intval($rowrow['productid']);
+           if(findpidContain($curpid, $validTypeArray,$conn) == 1){
+            //find the sold count of current productid
+             $cursold = findpidSoldcount($curpid, $conn); // the sold count of curpid
+             
+             if($cursold == -1){
+              echo "<br>Invalid Product";
+             }else{
+              //echo "<br>cur sold count: " . $cursold; 
+              //normal
+              /*begin */
+              if($curworstnum > $cursold ){
                  //   echo "<br>soldcount" . intval($row["soldcount"]) . " ";
-                    $curworstnum = intval($row["soldcount"]); // current worst number if now the  intval number
+                    $curworstnum = $cursold; // current worst number if now the  intval number
                    // echo "worstnum now:  " . $curworstnum . "<br>";
                     //discard the curworst array accumulated so far
+                    //echo "<br>changed for worst: worstnum" . $curworstnum . "pid: " . $curpid;
+                    //echo "<br>worst array before clearing";
+                    //print_r($worstArray);
                     $worstArray = array();
-                    
+                    //echo "<br>worst array after clearing";
+                    //print_r($worstArray);
                     //put the recent name into the curworst array
-                    array_push($worstArray, $row['productname']);
+                    //findpidname($curpid,$conn)
+                    array_push($worstArray, findpidname($curpid,$conn));
                     
-                }else if($curworstnum == intval($row["soldcount"])){
-                    array_push($worstArray, $row['productname']);
+                    
+                }else if($curworstnum == $cursold){
+                    //echo "<br>curworstnum: " . $curworstnum . "cursold: " . $cursold;
+                    array_push($worstArray, findpidname($curpid,$conn));
                 }
                 
-                if($curbestnum < intval($row["soldcount"]) ){
+                if($curbestnum < $cursold ){
                     //curbestnum is lesser than the cur num, thus replace
-                    $curbestnum = intval($row["soldcount"]);
-                    
+                   
+                    $curbestnum = $cursold;
+                     //echo "<br>change for best: bestnum" . $curbestnum . "pid: " . $curpid;
                     //clear the curbest num array
                     $bestArray = array();
-                    array_push($bestArray, $row["productname"]);
-                }else if($curbestnum == intval($row["soldcount"])){
-                    array_push($bestArray, $row["productname"]);
+                    array_push($bestArray, findpidname($curpid,$conn));
+                }else if($curbestnum == $cursold){
+                    array_push($bestArray, findpidname($curpid,$conn));
                     
                 }
-                
-                
-                
-                //stop pre-emptively for my case because i want it to stop and not going forever
-                /*$iterNow +=1;
-                if($iterStop == $iterNow){
-                    break;
-                }*/
-                
-            }
-           
-            //this cannot be allowed, if the best num and the worst num are the same, then
-            //worstarray are erased.
-            if($curbestnum = $curworstnum){
-                $worstArray = array();
-            }
-            
-            echo "<h2>The Following Are The Best Selling and the Worst Selling Items: </h2>";
-             echo "<br>Worst Selling:";
-             for($x = 0; $x< count($worstArray); $x++){
-                
-                echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;" . $worstArray[$x] . " ";
+              /*end */
              }
-             echo "<br>Best Selling";
-             for($x = 0; $x < count($bestArray); $x++){
-                 echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;" . $bestArray[$x] . " ";
-             }
+           }
            
-          }
+        
+         }
+        }
         
         
-        
-        
-        $conn->close();
-        
+       
+       }
+      }
+      
+      //find each basketitems in the basket that has the type specified
+      echo "<br>Current worst array<br>";
+      print_r($worstArray);
+      
+      echo "<br>Current best array<br>";
+      print_r($bestArray);
+      
+      $conn->close();
     }
+    //simply takes a product id and return the name of the product, return -1 if the product does not exist
+    function findpidname($pid, $conn){
+     $sql = "select productname from product where productid='$pid'";
+     $result = $conn->query($sql);
+     if($result->num_rows > 0){
+      while($row = $result->fetch_assoc()){
+       $nameret = $row['productname'];
+       return $nameret;
+      }
+     }else{
+      return -1;
+     }
+     
+    }
+    //simply takes a product id and return the sold count, return -1 if the product does not exist
+    function findpidSoldcount($pid, $conn){
+     $sql = "select soldcount from product where productid='$pid'";
+     $result = $conn->query($sql);
+     if($result->num_rows > 0){
+      while($row = $result->fetch_assoc()){
+       //return sold cout
+       $soldcount = intval($row['soldcount']);
+       return $soldcount;
+      }
+     }else{
+      //no such product return -1
+      return -1;
+     }
+     
+    }
+    //returns 1 if product id belong to the category ids in the array, else it return -1
+    function findpidContain($productid, $cidarray, $conn){
+      //find the categoryid of the product given product id
+      $sql = "select productid, categoryid from product where productid='$productid'";
+      $result = $conn->query($sql);
+      if($result->num_rows > 0){
+       while($row = $result->fetch_assoc()){
+        //echo $row['categoryid']
+        $pcateid = intval($row['categoryid']); //categoryid of product id
+        
+       }
+      }
+      
+      for($x=0; $x<count($cidarray); $x++){
+       if($cidarray[$x] == $pcateid){
+        //matches
+        return 1;
+       }
+       //next
+      }
+      
+      return -1;
+    }
+    
     //generates average basket value report, take a param base on how many days. so for example 1 day or 200 days. upper range is not restricted
     function generateTest(){
         //open connection
@@ -879,7 +1040,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
      // output data of each row
   //   echo "i got here i hope";
      while($row = $result->fetch_assoc()) {
-         echo "<br> BasketId: ". $row["basketid"]. " Basket Date: ". $row["basketdate"]. "<br>";
+        // echo "<br> BasketId: ". $row["basketid"]. " Basket Date: ". $row["basketdate"]. "<br>";
          
          //find the basketitems that has the associated basketid and return their price and quantity
          $bid = $row["basketid"];
@@ -901,7 +1062,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 $priceResult = $conn->query($sqlcommand);
                 if($priceResult->num_rows > 0){
                     while($prow= $priceResult->fetch_assoc()){
-                        echo "<br>-------- PID: " . $prow["productid"] . " Product Name: " . $prow["productname"] . " Price: " . $prow["price"]. " Product Quantity: " . $brow["productquantity"]."<br>";
+                    //    echo "<br>-------- PID: " . $prow["productid"] . " Product Name: " . $prow["productname"] . " Price: " . $prow["price"]. " Product Quantity: " . $brow["productquantity"]."<br>";
                         //getting price
                         $pricy = floatval($prow["price"]);
                         //totalproduct multiply by quanity
@@ -1954,6 +2115,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 
         $conn->close();
     }
+    
     function generateBasket(){
         date_default_timezone_set('America/New_York');
         set_time_limit(0);
