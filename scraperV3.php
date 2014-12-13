@@ -676,7 +676,7 @@
        }
       }
       echo "<br>";
-      print_r($validTypeArray);
+      //print_r($validTypeArray);
       
       //display the grandcategory with their respective total sold count
       grandSoldCountDisplay($conn); //this might be invalid
@@ -771,9 +771,11 @@
       //find each basketitems in the basket that has the type specified
       echo "<br>Current worst array<br>";
       print_r($worstArray);
+      echo "<br>Sold Count Number: " . $curworstnum;
       
       echo "<br>Current best array<br>";
       print_r($bestArray);
+      echo "<br>Sold Count Number: " . $curbestnum;
       
       $conn->close();
     }
@@ -2019,11 +2021,11 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         $curTime = date("Y-m-d H:i:s");
          //bonus person with valid email
         $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status, currentbasket)
-            values ( 'Jing', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'Hornbake Library, College Park, MD 20742', '4442225555', 'infinityarc@gmail.com', 'delinq', '1');";
+            values ( 'Chen, Jing', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'Hornbake Library, College Park, MD 20742', '4442225555', 'infinityarc@gmail.com', 'delinq', '1');";
         $sqlA = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values (LAST_INSERT_ID(), 1, 'daily' ,'$curTime')";
 
         $sql1 = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status, currentbasket)
-            values ( 'Joel', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '4310 Knox Road, College Park, MD 20740', '4442225555', 'jsamel@terpmail.umd.edu', 'delinq', '2' );";
+            values ( 'Samelson, Joel', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', '4310 Knox Road, College Park, MD 20740', '4442225555', 'jsamel@terpmail.umd.edu', 'delinq', '2' );";
         $sqlB = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values (LAST_INSERT_ID(), 1, 'daily' ,'$curTime')";
         
         if ($conn->query($sql) === TRUE) {
