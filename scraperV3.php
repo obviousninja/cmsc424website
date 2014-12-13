@@ -1899,7 +1899,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
             $name = "person" . $x;
             $emailz = "person" . $x . "@gmail.com";
             $sql = "insert into customer (name, age, sex, password, balance, paymentflag , state, creditcardnumber, ccexpiration, bankaccountnumber, bankroutingnumber, address, phonenumber, email, status)
-            values ( '$name', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'LaPlata Hall, College Park, MD 20742', '4442225555', '$emailz', 'ontime' )";
+            values ( '$name', '1', 'm', '111', '0', '1', 'act', '11111111', '2222', '33333', '444444', 'Hornbake Library, College Park, MD 20742', '4442225555', '$emailz', 'ontime' )";
             //echo "<br>" . $sql;
         
      if ($conn->query($sql) === TRUE) {
@@ -2045,7 +2045,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 $custAddress = $row["address"];
                 $_SESSION["basketid"] = $row["basketid"];
             }
-
+            $priceWithTax = round($priceWithTax, 2);
             
 
             /* FIND DELIVERY TIME AND DISTANCE */
@@ -2124,6 +2124,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
 
         //$sql = "INSERT INTO $database.transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
         assignDeliveryPeople();   
+        deliverOrders();
            
             
             
@@ -2197,14 +2198,131 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         $servername = "localhost";
         $username = "jchen127";
         $password = "KbZFqBcZCy29b3Lx";
-        $dbname = "mydb";
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        $database = "myDB";
+        $conn = new mysqli($servername, $username, $password, $database);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        echo "<br>";
+
+        $sqlWaitingOrders = "SELECT * FROM $database.dispatchticket  WHERE ISNULL(dpid)";
+        $resultWaitingOrders = mysqli_query($conn, $sqlWaitingOrders);
+
+        if ($resultWaitingOrders) {
+
+            if (mysqli_num_rows($resultWaitingOrders) > 0) {
+                echo "Found " . mysqli_num_rows($resultWaitingOrders) . " unassigned dispatch tickets <br>";
+                while ($row = mysqli_fetch_assoc($resultWaitingOrders)) {
+                    $ticketid = $row["transactionid"];
+                    $customeraddress = $row["customeraddress"];
+                    echo $ticketid . "\tDPID: " . $row["dpid"] . "<br>";
+
+                    $sql = "SELECT * FROM $database.deliveryperson WHERE curlocation = 'home'";
+                    $result = mysqli_query($conn, $sql);
+
+                    if ($result && mysqli_num_rows($result) > 0) {
+                        echo "Found " . mysqli_num_rows($result) . " free delivery people<br>";
+                        $counter = 0;
+                        while($counter < 1 && $row2 = mysqli_fetch_assoc($result)) {
+                            $counter += 1;
+                            $dpid = $row2["dpid"];
+                            $sqlTicket = "UPDATE $database.dispatchticket SET dpid = $dpid WHERE transactionid = $ticketid";
+                            $resultTicket = mysqli_query($conn, $sqlTicket);
+
+                            if ($resultTicket) {
+                                echo "Updated ticket " . $ticketid . " with dpid " . $dpid . "<br>";
+
+                                $sqlDP = "UPDATE $database.deliveryperson SET curlocation = '$customeraddress' WHERE dpid = $dpid";
+                                $resultDP = mysqli_query($conn, $sqlDP);
+
+                                if ($resultDP) {
+                                    echo "Updated dpid " . $dpid . " with new location " . $customeraddress . "<br>";
+                                } else {
+                                    echo "FAILED to update DP location!<br>";
+                                }
+                            } else {
+                                echo "Failed to update ticket with dpid!<br>";
+                            }
+                        }
+                    } else {
+                        echo "FAILED to find any free delivery people<br>";
+                    }
+                }
+            } else {
+                echo "FAILED to find any undelivered or not enroute orders!<br>";
+            }
+        } else {
+            echo "QUERY FAILED to find any undelivered or not enroute orders!<br>";
+        }
+
+        
+    }
+
+
+    function deliverOrders() {
+        $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $database = "myDB";
+        $conn = new mysqli($servername, $username, $password, $database);
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        
+        $sql = "SELECT * FROM $database.deliveryperson WHERE curlocation != 'home'";
+        $result = mysqli_query($conn, $sql);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            echo "There are " . mysqli_num_rows($result) . " people currently delivering orders.<br>";
+
+            while ($row = mysqli_fetch_assoc($result)) {
+                $dpid = $row["dpid"];
+                $sqlTicket = "SELECT * FROM $database.dispatchticket d, $database.transaction t WHERE d.dpid = $dpid AND d.transactionid = t.transactionid";
+                $resultTicket = mysqli_query($conn, $sqlTicket);
+
+                if ($resultTicket) { 
+                    if(mysqli_num_rows($resultTicket) > 0) {
+                        while ($row = mysqli_fetch_assoc($resultTicket)) {
+                            $tid = $row["transactionid"];
+                            $arrivalTime = $row["estimatetimeofarrival"];
+                            echo "Estimated arrival: " . $arrivalTime . "<br>";
+
+                            $date = date("Y-m-d H:i:s", time());
+
+                            if ($date >= $arrivalTime) {
+                                echo "ARRIVAL TIME PASSED<br>";
+                                $sqlDelivered = "UPDATE $database.transaction SET deliverydate = '$date' WHERE transactionid = $tid";
+                                $resultDelivered = mysqli_query($conn, $sqlDelivered);
+
+                                if ($resultDelivered) {
+                                    echo "SUCCESS updating transaction deliverydate<br>";
+                                    $sqlDPDelivered = "UPDATE $database.deliveryperson SET curlocation = 'home' WHERE dpid = $dpid";
+                                    $resultDPDelivered = mysqli_query($conn, $sqlDPDelivered);
+
+                                    if ($resultDPDelivered) {
+                                        echo "SUCCESS updating dp location<br>";
+                                    } else {
+                                        echo "FAILURE updating dp location!<br>";
+                                    }
+                                } else {
+                                    echo "FAILURE updating transaction deliverydate!<br>";
+                                }                                
+
+                            } else {
+                                echo "Still delivering...<br>";
+                            }
+                        }
+                    }
+                } else {
+                    echo "FAILED to find dispatch ticket/transaction<br>";
+                }
+            }
+        } else {
+            echo "NO delivering delivery people found!<br>";
+        }
+        echo "<br>";
     }
 
 

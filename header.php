@@ -1,5 +1,5 @@
 <div style="background-color: #FFC48C">
-	<a href="loggedinhome.html?customerid=<?php echo $_SESSION['cid'] ?>" style="text-decoration:none; text-shadow: 3px 3px 3px #000000">
+	<a href="index.html" style="text-decoration:none; text-shadow: 3px 3px 3px #000000">
 		<!--<p align="center"><img src="logo.png" alt="Logo" style="width:530px;height:140px" align="center"></p>-->
 		<p align="center"><b><font face="Verdana" size="140" color="#FC7403">Nom.com</font></b></p>
 	</a>
