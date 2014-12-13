@@ -2347,6 +2347,8 @@ echo $date->format('Y-m-d H:i:s') . "\n";
             }else{
                  echo "Error generating basket item: " . $conn->error;
             }    
+
+            updateProductCount($pid, $quan);
             
         }     
         
@@ -2731,7 +2733,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         header( 'Content-type: text/html; charset=utf-8' );
         //main
-        /*createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
+        /**/createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
         createTables();    //temporarily offline  THIS IS THE RIGHT CODE
  
         generateCustomer(50); //temporarily offline THIS IS THE RIGHT CODE
@@ -2739,7 +2741,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         generateDeliveryGuy(20); //temporarily offline THIS IS THE RIGHT CODE
 
         scrapeMasterMarkK();  //temporarily offline until other database items are generated  THIS IS THE RIGHT CODE
-        */
+        
         generateBasket();  //this generates basket and basket items
       
     
