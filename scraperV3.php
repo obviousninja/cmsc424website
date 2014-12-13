@@ -1034,7 +1034,7 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
     //output the delinquent customer and email them
     function delinqReport(){
-          $servername = "localhost";
+        $servername = "localhost";
         $username = "jchen127";
         $password = "KbZFqBcZCy29b3Lx";
         $dbname = "mydb";
@@ -1058,32 +1058,32 @@ echo $date->format('Y-m-d H:i:s') . "\n";
                 $mailadd = $row["email"];
                 
                 //send email to the customer
-            $from = 'smallfry9000@yahoo.com';
-            $to = $mailadd;
-            $subject = "Pay Up $cname , You are a bad customer";
-            $body = "Hi,\n\nYou are delinquent on payment! what payment you ask?! the \"Payment\". I am sending my homies after you, you will be REKTed. REKTed i tell ya!";
+                $from = 'smallfry9000@yahoo.com';
+                $to = $mailadd;
+                $subject = "Pay Up $cname , You are a bad customer";
+                $body = "Hi,\n\nYou are delinquent on payment! what payment you ask?! the \"Payment\". I am sending my homies after you, you will be REKTed. REKTed i tell ya!";
 
-            $headers = array(
-             'From' => $from,
-            'To' => $to,
-         'Subject' => $subject
-            );
+                $headers = array(
+                    'From' => $from,
+                    'To' => $to,
+                    'Subject' => $subject
+                );
 
-        $smtp = Mail::factory('smtp', array(
-        'host' => 'ssl://smtp.mail.yahoo.com',
-        'port' => '465',
-        'auth' => true,
-        'username' => 'smallfry9000@yahoo.com',
-        'password' => 'insaneAsylum1'
-    ));
+                $smtp = Mail::factory('smtp', array(
+                    'host' => 'ssl://smtp.mail.yahoo.com',
+                    'port' => '465',
+                    'auth' => true,
+                    'username' => 'smallfry9000@yahoo.com',
+                    'password' => 'insaneAsylum1'
+                ));
 
-        $mail = $smtp->send($to, $headers, $body);
+                $mail = $smtp->send($to, $headers, $body);
 
-        if (PEAR::isError($mail)) {
-      echo('<p>' . $mail->getMessage() . '</p>');
-        } else {
-      echo('<p>Message successfully sent!</p>');
-        }
+                if (PEAR::isError($mail)) {
+                    echo('<p>' . $mail->getMessage() . '</p>');
+                } else {
+                    echo('<p>Message successfully sent!</p>');
+                }
                 
                 //end of sending mail
                 
@@ -1955,9 +1955,9 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         $conn->close();
     }
     function generateBasket(){
-         date_default_timezone_set('America/New_York');
-         set_time_limit(0);
-           $servername = "localhost";
+        date_default_timezone_set('America/New_York');
+        set_time_limit(0);
+        $servername = "localhost";
         $username = "jchen127";
         $password = "KbZFqBcZCy29b3Lx";
         $dbname = "mydb";
@@ -1969,164 +1969,165 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         $maxAmount = rand(200, 10000);
         //echo $maxAmount;
         
-        for($i=0;$i<$maxAmount;$i++){
-             $customerNum = rand(1, 50);
+        for($i=0;$i<$maxAmount;$i++) {
+            $customerNum = rand(1, 50);
             $curTime = date("Y-m-d H:i:s");
-            echo "customernum is: " . $customerNum . " curTime " . $curTime;
-            $sql = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values ('$customerNum', '1', 'daily' ,'$curTime')";        
+            echo "customernum is: " . $customerNum . " curTime " . $curTime . "<br>";
+            $sql = "insert into basket (customerid, isstandingorder, standingordertype, basketdate) values ('$customerNum', '1', 'Daily' ,'$curTime')";        
            
-                if ($conn->query($sql) === TRUE) {
-               echo "Basket $i generated successfully";
-          }else{
-             echo "Error generating basket: " . $conn->error;
-          }
-           //insert basketid into the customer's currentbasketid
-           //find the max basket t the moment
+            if ($conn->query($sql) === TRUE) {
+                echo "Basket $i generated successfully";
+            }else{
+                echo "Error generating basket: " . $conn->error;
+            }
+            //insert basketid into the customer's currentbasketid
+            //find the max basket t the moment
             $sql = "select count(*) as total from basket";
-         $result1 = $conn->query($sql);
-       if($result1->num_rows >0){
-        while($newRow = $result1->fetch_assoc()){
-          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
-        //   echo "<br> count: ". $newRow['total'];
-            $maxBasketid = intval($newRow['total']);  // will be the id that we are looking for
-        }
-       }
+            $result1 = $conn->query($sql);
+            if($result1->num_rows >0){
+                while($newRow = $result1->fetch_assoc()){
+                    // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+                    //   echo "<br> count: ". $newRow['total'];
+                    $maxBasketid = intval($newRow['total']);  // will be the id that we are looking for
+                }
+            }
     
-          //update the customer's current basket with the latest basket as the customer's most current basket
+            //update the customer's current basket with the latest basket as the customer's most current basket
           
-          /*   $updatecommand = "update product set soldcount= '$newCount' where productid = '$pid'";
+            /*   $updatecommand = "update product set soldcount= '$newCount' where productid = '$pid'";
             if ($conn->query($updatecommand) === TRUE) {
-    echo "Record updated successfully";
-} else {
-    echo "Error updating record: " . $conn->error;
-}*/
-        $sql = "update customer set currentbasket= '$maxBasketid' where customerid='$customerNum'";
-        if ($conn->query($sql) === TRUE) {
-            echo "Customer record updated successfully";
-        } else {
-            echo "Error updating record: " . $conn->error;
-        }
-
-        generateBaskeItems($conn);
-
-        //calculate costs, etc.
-        $sql = "SELECT * FROM basket b, basketitem bi, product p, customer c WHERE c.customerid = $customerNum AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
-        $result = mysqli_query($conn, $sql);
-        
-        $totalPrice = 0;
-        $priceWithTax = 0;
-        $tax = 0;
-        $deliveryCost = 0;
-        $isCheck = false;
-        $custAddress = "";
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            // output data of each row
-            while($row = mysqli_fetch_assoc($result)) {
-                //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
-                $tempPrice = 0;
-                if ($row["isonsale"]) {
-                    $tempPrice = $row["saleprice"] * $row["productquantity"];
-                } else {
-                    $tempPrice = $row["price"] * $row["productquantity"];
-                }
-                $totalPrice = $totalPrice + $tempPrice;
-
-                if ($row["taxable"]) {
-                    $tax = $tax + ($tempPrice * 0.06);
-                    $priceWithTax = $priceWithTax + ($tempPrice * 1.06);
-                } else {
-                    $priceWithTax = $priceWithTax + $tempPrice;
-                }
-
-                if ($row["paymentflag"]) {
-                    $isCheck = true;
-                }
-                $custAddress = $row["address"];
-                $_SESSION["basketid"] = $row["basketid"];
-            }
-            $priceWithTax = round($priceWithTax, 2);
-            
-
-            /* FIND DELIVERY TIME AND DISTANCE */
-            $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
-            $url = $url . 'destinations=' . urlencode($custAddress);
-            //echo "URL: " . $url . "<br>";
-            $data = file_get_contents($url);
-
-            if(!$data) echo "FAILED DISTANCE!!!!<br>";
-            //echo $data . "<br>";
-
-            $data = json_decode($data);
-            
-            $time = 0;
-            $distance = 0;
-            foreach($data->rows[0]->elements as $road) {
-                $time += $road->duration->value;
-                $distance += $road->distance->value;
-            }
-
-            $drivingDistMeters = $distance;
-            echo "Driving distance: " . $drivingDistMeters . "<br>";
-            $drivingDistMiles = $drivingDistMeters/1000 * 0.621371;
-            echo "Driving distance in miles: " . $drivingDistMiles . "<br>";
-
-            $sqlDist = "SELECT price FROM deliverypricing WHERE $drivingDistMiles >= rangestart AND $drivingDistMiles < rangeend";
-            $resultDist = mysqli_query($conn, $sqlDist);
-
-            if ($resultDist && mysqli_num_rows($resultDist) > 0) {
-                $price = 0;
-                // output data of each row
-                while($row = mysqli_fetch_assoc($resultDist)) {
-                    $price = $row["price"];
-
-                }
-                $totaltransactioncost = $priceWithTax + $price;
-                $date = date("Y-m-d H:i:s", time());
-                $timeofarrival = date("Y-m-d H:i:s", time() + $time);
-
-                $sqlTrans = "INSERT INTO transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
-                $resultTrans = mysqli_query($conn, $sqlTrans);
-
-                if ($resultTrans) {
-                    echo "Transaction inserted<br>";
-
-                    $sqlBill = "INSERT INTO bill VALUES (NULL, LAST_INSERT_ID(), $totalPrice, $priceWithTax, $price, NULL, 1)";
-                    $resultBill = mysqli_query($conn, $sqlBill);
-
-                    if (!$resultBill) {
-                        echo "Insertion of bill failed!<br>";
-                    } else {
-                        echo "Bill insertion success!<br>";
-
-                        $sqlDispatch = "INSERT INTO dispatchticket VALUES ((SELECT transactionid FROM transaction WHERE basketid = $maxBasketid), $customerNum, $maxBasketid, NULL, (SELECT address FROM customer WHERE customerid = $customerNum), '$date')";
-                        $resultDispatch = mysqli_query($conn, $sqlDispatch);
-
-                        if (!$resultDispatch) {
-                            echo "Dispatch ticket creation failed!<br>";
-                        } else {
-                            echo "Dispatch ticket creation success!<br>";
-                        }
-                    }
-                } else {
-                    echo "FAILED transaction<br>";
-                }
-
+                echo "Record updated successfully";
             } else {
-                echo "Error getting distance<br>";
+                echo "Error updating record: " . $conn->error;
+            }*/
+            $sql = "update customer set currentbasket= '$maxBasketid' where customerid='$customerNum'";
+            if ($conn->query($sql) === TRUE) {
+                echo "Customer record updated successfully";
+            } else {
+                echo "Error updating record: " . $conn->error;
             }
-        } else {
-            echo "Error getting basket/customer/product info<br>";
-        }
 
+            generateBaskeItems($maxBasketid, $conn);
 
-
-
-        //$sql = "INSERT INTO $database.transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
-        assignDeliveryPeople();   
-        deliverOrders();
-           
+            //calculate costs, etc.
+            $sql = "SELECT * FROM basket b, basketitem bi, product p, customer c WHERE c.customerid = $customerNum AND c.currentbasket = b.basketid AND c.currentbasket = bi.basketid AND bi.productid = p.productid";
+            $result = mysqli_query($conn, $sql);
             
+            $totalPrice = 0;
+            $priceWithTax = 0;
+            $tax = 0;
+            $deliveryCost = 0;
+            $isCheck = false;
+            $custAddress = "";
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                // output data of each row
+                while($row = mysqli_fetch_assoc($result)) {
+                    //echo "Customer name: " . $row["name"]. " - basketid: " . $row["basketid"] . " - productname: " . $row["productname"] . " - quantity: " . $row["productquantity"] . "<br>";
+                    $tempPrice = 0;
+                    if ($row["isonsale"]) {
+                        $tempPrice = $row["saleprice"] * $row["productquantity"];
+                    } else {
+                        $tempPrice = $row["price"] * $row["productquantity"];
+                    }
+                    $totalPrice = $totalPrice + $tempPrice;
+
+                    if ($row["taxable"]) {
+                        $tax = $tax + ($tempPrice * 0.06);
+                        $priceWithTax = $priceWithTax + ($tempPrice * 1.06);
+                    } else {
+                        $priceWithTax = $priceWithTax + $tempPrice;
+                    }
+
+                    if ($row["paymentflag"]) {
+                        $isCheck = true;
+                    }
+                    $custAddress = $row["address"];
+                    $_SESSION["basketid"] = $row["basketid"];
+                }
+                $priceWithTax = round($priceWithTax, 2);
+                
+
+                /* FIND DELIVERY TIME AND DISTANCE */
+                $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
+                $url = $url . 'destinations=' . urlencode($custAddress);
+                //echo "URL: " . $url . "<br>";
+                $data = file_get_contents($url);
+
+                if(!$data) echo "FAILED DISTANCE!!!!<br>";
+                //echo $data . "<br>";
+
+                $data = json_decode($data);
+                
+                $time = 0;
+                $distance = 0;
+                foreach($data->rows[0]->elements as $road) {
+                    $time += $road->duration->value;
+                    $distance += $road->distance->value;
+                }
+
+                $drivingDistMeters = $distance;
+                echo "Driving distance: " . $drivingDistMeters . "<br>";
+                $drivingDistMiles = $drivingDistMeters/1000 * 0.621371;
+                echo "Driving distance in miles: " . $drivingDistMiles . "<br>";
+
+                $sqlDist = "SELECT price FROM deliverypricing WHERE $drivingDistMiles >= rangestart AND $drivingDistMiles < rangeend";
+                $resultDist = mysqli_query($conn, $sqlDist);
+
+                if ($resultDist && mysqli_num_rows($resultDist) > 0) {
+                    $price = 0;
+                    // output data of each row
+                    while($row = mysqli_fetch_assoc($resultDist)) {
+                        $price = $row["price"];
+
+                    }
+                    $totaltransactioncost = $priceWithTax + $price;
+                    $date = date("Y-m-d H:i:s", time());
+                    $timeofarrival = date("Y-m-d H:i:s", time() + $time);
+
+                    $sqlTrans = "INSERT INTO transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
+                    $resultTrans = mysqli_query($conn, $sqlTrans);
+
+                    if ($resultTrans) {
+                        echo "Transaction inserted<br>";
+
+                        $sqlBill = "INSERT INTO bill VALUES (NULL, LAST_INSERT_ID(), $totalPrice, $priceWithTax, $price, NULL, 1)";
+                        $resultBill = mysqli_query($conn, $sqlBill);
+
+                        if (!$resultBill) {
+                            echo "Insertion of bill failed!<br>";
+                        } else {
+                            echo "Bill insertion success!<br>";
+
+                            $sqlDispatch = "INSERT INTO dispatchticket VALUES ((SELECT transactionid FROM transaction WHERE basketid = $maxBasketid), $customerNum, $maxBasketid, NULL, (SELECT address FROM customer WHERE customerid = $customerNum), '$date')";
+                            $resultDispatch = mysqli_query($conn, $sqlDispatch);
+
+                            if (!$resultDispatch) {
+                                echo "Dispatch ticket creation failed!<br>";
+                            } else {
+                                echo "Dispatch ticket creation success!<br>";
+                            }
+                        }
+                    } else {
+                        echo "FAILED transaction<br>";
+                    }
+
+                } else {
+                    echo "Error getting distance<br>";
+                }
+            } else {
+                echo "Error getting basket/customer/product info<br>";
+            }
+
+
+
+
+            //$sql = "INSERT INTO $database.transaction VALUES (NULL, $maxBasketid, $customerNum, $totaltransactioncost, 1, '$date', '$timeofarrival', NULL)";
+            assignDeliveryPeople();   
+            deliverOrders();
+            checkStandingOrders();
+            
+            echo "<hr>";
             
             ob_flush();
             flush();
@@ -2138,58 +2139,54 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
     
 
-    function generateBaskeItems($conn){
+    function generateBaskeItems($bid, $conn){
            
         
         //get current count of products
         //$sql = "select count(*) as total from product where categoryid = '$categoryidBest'";
         $sql = "select count(*) as total from product";
-         $result1 = $conn->query($sql);
-       if($result1->num_rows >0){
-        while($newRow = $result1->fetch_assoc()){
-          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
-        //   echo "<br> count: ". $newRow['total'];
-            $totalProduct = intval($newRow['total']);  //where to stop
+        $result1 = $conn->query($sql);
+        if($result1->num_rows >0){
+            while($newRow = $result1->fetch_assoc()){
+                // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+                //   echo "<br> count: ". $newRow['total'];
+                $totalProduct = intval($newRow['total']);  //where to stop
+            }
         }
-       }
-       echo "<br>total product is: " . $totalProduct;
+        echo "<br>total product is: " . $totalProduct;
        
         
           
-          $maxAmount1 = rand(1, 10);
-           for($i=0;$i<$maxAmount1;$i++){
+        $maxAmount1 = rand(1, 10);
+        for($i=0;$i<$maxAmount1;$i++) {
             //get current count of baskets
-        $sql = "select count(*) as total from basket";
-         $result1 = $conn->query($sql);
-       if($result1->num_rows >0){
-        while($newRow = $result1->fetch_assoc()){
-          // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
-        //   echo "<br> count: ". $newRow['total'];
-            $totalBasket = intval($newRow['total']);  //where to stop
-        }
-       }
-          echo "<br>total basket is: " . $totalBasket;
-          if($totalBasket < 5){
-            return -1;
-          }
-          
-          
-             $bid = rand(1, $totalBasket);
-             $pid = rand(1, $totalProduct);
-             $quan = rand(1, 10);
+            $sql = "select count(*) as total from basket";
+            $result1 = $conn->query($sql);
+           if($result1->num_rows >0){
+                while($newRow = $result1->fetch_assoc()){
+                    // echo "<br>################## productid: " . $newRow['productid'] . " categoryid " . $newRow['categoryid'] . " name " . $newRow['productname'];
+                    //   echo "<br> count: ". $newRow['total'];
+                    $totalBasket = intval($newRow['total']);  //where to stop
+                }
+            }
+            echo "<br>total basket is: " . $totalBasket;
+            if($totalBasket < 5){
+                return -1;
+            }
+              
+              
+            //$bid = rand(1, $totalBasket);
+            $pid = rand(1, $totalProduct);
+            $quan = rand(1, 10);
             $sql = "insert into basketitem (basketid, productid, productquantity) values ('$bid', '$pid', '$quan')";        
-           
-                if ($conn->query($sql) === TRUE) {
-               echo "Basket $i generated successfully";
-          }else{
-             echo "Error generating basket: " . $conn->error;
-          }
+               
+            if ($conn->query($sql) === TRUE) {
+                   echo "Basket item $i generated successfully";
+            }else{
+                 echo "Error generating basket item: " . $conn->error;
+            }    
             
-           
-            
-        }
-          
-          
+        }     
         
     }
 
@@ -2326,10 +2323,184 @@ echo $date->format('Y-m-d H:i:s') . "\n";
     }
 
 
+    function checkStandingOrders() {
+        $servername = "localhost";
+        $username = "jchen127";
+        $password = "KbZFqBcZCy29b3Lx";
+        $database = "mydb";
+        $conn = new mysqli($servername, $username, $password, $database);
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql = "SELECT * FROM $database.basket b, $database.customer c WHERE b.isstandingorder = 1 AND b.haltstandingorder = 0 AND b.customerid = c.customerid";
+        $result = mysqli_query($conn, $sql);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $bid = $row["basketid"];
+                $type = $row["standingordertype"];
+                $custAddress = $row["address"];
+                $date = date("Y-m-d H:i:s");
+                $sqlLastDate = "SELECT * FROM $database.transaction WHERE basketid = $bid ORDER BY ordertime";
+                $resultLastDate = mysqli_query($conn, $sqlLastDate);
+                $lastDate = NULL;
+                $needsOrder = false;
+                $transid = NULL;
+
+                if ($resultLastDate) {
+                    if (mysqli_num_rows($resultLastDate) > 0) {
+                        while ($row = mysqli_fetch_assoc($resultLastDate)) {
+                            $transid = $row["transactionid"];
+                            $lastDate = $row["ordertime"];
+                        }
+                        echo "Last order date for basket " . $bid . ": " . $lastDate . "\t";
+                        if ($type == "Daily") {
+                            $nextOrderTime = date("Y-m-d H:i:s", strtotime($lastDate . " +1 days"));
+                            echo "Next Daily Order Time: " . $nextOrderTime . "\t";
+                            if (strtotime($nextOrderTime) <= strtotime($date)) {
+                                echo "TIME TO RE-ORDER!";
+                                $needsOrder = true;
+                            }
+                        } else if ($type == "Weekly") {
+                            $nextOrderTime = date("Y-m-d H:i:s", strtotime($lastDate . " +7 days"));
+                            echo "Next Weekly Order Time: " . $nextOrderTime . "\t";
+                            if (strtotime($nextOrderTime) <= strtotime($date)) {
+                                echo "TIME TO RE-ORDER!";
+                                $needsOrder = true;
+                            }
+                        } else if ($type == "Monthly") {
+                            $nextOrderTime = date("Y-m-d H:i:s", strtotime($lastDate . " +1 months"));
+                            echo "Next Monthly Order Time: " . $nextOrderTime . "\t";
+                            if (strtotime($nextOrderTime) <= strtotime($date)) {
+                                echo "TIME TO RE-ORDER!";
+                                $needsOrder = true;
+                            }
+                        } else {
+                            echo "INVALID STANDING ORDER TYPE";
+                        }
+                        echo "<br>";
+
+                        if ($needsOrder) {
+                            /* FIND DELIVERY TIME AND DISTANCE */
+                            $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Computer+Science+Instructional+Center&';
+                            $url = $url . 'destinations=' . urlencode($custAddress);
+                            //echo "URL: " . $url . "<br>";
+                            $data = file_get_contents($url);
+
+                            if(!$data) echo "FAILED DISTANCE!!!!<br>";
+                            //echo $data . "<br>";
+
+                            $data = json_decode($data);
+                            
+                            $time = 0;
+                            $distance = 0;
+                            foreach($data->rows[0]->elements as $road) {
+                                $time += $road->duration->value;
+                                $distance += $road->distance->value;
+                            }
+                            $timeofarrival = date("Y-m-d H:i:s", time() + $time);
+                            echo "TOA: " . $timeofarrival . "TransID: " . $transid . "\n";
+
+                            $cid = NULL;
+                            $transactiontotal = NULL;
+                            $sqlTest = "SELECT * FROM $database.transaction WHERE transactionid = $transid";
+                            $resultTest = mysqli_query($conn, $sqlTest);
+                            if($resultTest) {
+                                if (mysqli_num_rows($resultTest) > 0) {
+                                    while ($row = mysqli_fetch_assoc($resultTest)) {
+                                        $cid = $row["customerid"];
+                                        $transactiontotal = $row["transactiontotal"];
+                                        echo "CID: " . $cid;
+                                    }
+                                } else {
+                                    echo "NO RESULTS";
+                                }
+                            } else {
+                                echo "FAIL :(";
+                            }
+
+                            $deliverycharge = NULL;
+                            $totalitemcost = NULL;
+                            $costwithtax = NULL;
+                            $sqlTest = "SELECT * FROM bill WHERE transactionid = $transid";
+                            $resultTest = mysqli_query($conn, $sqlTest);
+                            if($resultTest) {
+                                if (mysqli_num_rows($resultTest) > 0) {
+                                    while ($row = mysqli_fetch_assoc($resultTest)) {
+                                        $deliverycharge = $row["deliverycharge"];
+                                        $totalitemcost = $row["totalitemcost"];
+                                        $costwithtax = $row["costwithtax"];
+                                    }
+                                } else {
+                                    echo "NO RESULTS";
+                                }
+                            } else {
+                                echo "FAIL :(";
+                            }
+                         
+                            $sqlTrans = "INSERT INTO $database.transaction VALUES (NULL, $bid, $cid, $transactiontotal, 1, '$date', '$timeofarrival', NULL)";
+                            $resultTrans = mysqli_query($conn, $sqlTrans);
+
+                            if ($resultTrans) {
+                                echo "NEW transaction inserted<br>";
+
+                                $newTID = NULL;
+                                $sqlTest = "SELECT LAST_INSERT_ID() as transactionid";
+                                $resultTest = mysqli_query($conn, $sqlTest);
+                                if($resultTest) {
+                                    if (mysqli_num_rows($resultTest) > 0) {
+                                        while ($row = mysqli_fetch_assoc($resultTest)) {
+                                            $newTID = $row["transactionid"];
+                                            echo "New TransID: " . $newTID . "\t";
+                                        }
+                                    } else {
+                                        echo "NO RESULTS";
+                                    }
+                                } else {
+                                    echo "FAIL :(";
+                                }
+
+                                $sqlBill = "INSERT INTO bill VALUES (NULL, LAST_INSERT_ID(), $totalitemcost, $costwithtax, $deliverycharge, NULL, 1)";
+                                $resultBill = mysqli_query($conn, $sqlBill);
+
+                                if (!$resultBill) {
+                                    echo "Insertion of bill failed!<br>";
+                                } else {
+                                    echo "Bill insertion success!<br>";
+
+                                    $sqlDispatch = "INSERT INTO dispatchticket VALUES ($newTID, $cid, $bid, NULL, '$custAddress', '$date')";
+                                    $resultDispatch = mysqli_query($conn, $sqlDispatch);
+
+                                    if (!$resultDispatch) {
+                                        echo "Dispatch ticket creation failed!<br>";
+                                    } else {
+                                        echo "Dispatch ticket creation success!<br>";
+                                    }
+                                }
+                            } else {
+                                echo "FAILED transaction<br>";
+                            }
+                        }
+                    } else {
+                        //echo "NO transactions found for basket " . $bid . "!<br>";
+                    }
+                } else {
+                    echo "Query failed!<br>";
+                }
+
+            }
+        } else {
+            echo "No Standing Orders<br>";
+        }
+    }
+
+
     
     //if we assume administrator put 1-7 items on sale every week on time, then there will be no need for timer
     function revertItSeven(){
-             $servername = "localhost";
+        $servername = "localhost";
         $username = "jchen127";
         $password = "KbZFqBcZCy29b3Lx";
         $dbname = "mydb";
@@ -2398,15 +2569,15 @@ echo $date->format('Y-m-d H:i:s') . "\n";
         
         header( 'Content-type: text/html; charset=utf-8' );
         //main
-        /**/createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
+        /*createDatabase();  //temporarily offline  THIS IS THE RIGHT CODE
         createTables();    //temporarily offline  THIS IS THE RIGHT CODE
  
         generateCustomer(50); //temporarily offline THIS IS THE RIGHT CODE
         
-        generateDeliveryGuy(50); //temporarily offline THIS IS THE RIGHT CODE
+        generateDeliveryGuy(20); //temporarily offline THIS IS THE RIGHT CODE
 
         scrapeMasterMarkK();  //temporarily offline until other database items are generated  THIS IS THE RIGHT CODE
-        
+        */
         generateBasket();  //this generates basket and basket items
       
     
